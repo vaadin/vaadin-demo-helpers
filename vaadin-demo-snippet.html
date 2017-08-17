@@ -1,0 +1,235 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/utils/templatize.html">
+<link rel="import" href="../polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="import" href="../marked-element/marked-element.html">
+<link rel="import" href="../prism-element/prism-highlighter.html">
+<link rel="import" href="../prism-element/prism-theme-default.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+
+<dom-module id="vaadin-demo-snippet">
+  <template>
+    <style include="prism-theme-default">
+       :host {
+        display: block;
+
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+        0 1px 5px 0 rgba(0, 0, 0, 0.12),
+        0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        margin-bottom: 40px;
+        @apply --demo-snippet;
+      }
+
+      #demo {
+        display: block;
+        border-bottom: 1px solid #e0e0e0;
+        background-color: white;
+        margin: 0;
+        padding: 20px;
+        @apply --demo-snippet-demo;
+      }
+
+      .code-container {
+        margin: 0;
+        background-color: #f5f5f5;
+        font-size: 13px;
+        overflow: auto;
+        position: relative;
+        padding: 0 20px;
+        @apply --demo-snippet-code;
+      }
+
+      .code {
+        padding: 20px;
+        margin: 0;
+        background-color: var(--google-grey-100);
+        font-size: 13px;
+        overflow: auto;
+        @apply --demo-snippet-code;
+      }
+
+      .code>pre {
+        margin: 0;
+        padding: 0 0 10px 0;
+      }
+
+      button {
+        position: absolute;
+        bottom: 0;
+        right: 0px;
+        text-transform: uppercase;
+        border: none;
+        cursor: pointer;
+        background: #e0e0e0;
+      }
+
+      paper-tabs[hidden] {
+        display: none;
+      }
+
+    </style>
+
+    <prism-highlighter></prism-highlighter>
+
+    <div id="demo">
+      <slot></slot>
+    </div>
+
+    <div class="code-container">
+      <paper-tabs selected="{{selectedSource}}" attr-for-selected="name" hidden$="[[!_hasAdditionalSources]]">
+        <template is="dom-repeat" items="[[_sourcesWithMarkdown]]" as="source">
+          <paper-tab name$="[[source.title]]">[[source.title]]</paper-tab>
+        </template>
+      </paper-tabs>
+
+      <iron-pages selected="{{selectedSource}}" attr-for-selected="name" selected-attribute="active">
+        <template is="dom-repeat" items="[[_sourcesWithMarkdown]]" as="source">
+          <marked-element name$="[[source.title]]" markdown="[[source.markdown]]">
+            <div class="code" slot="markdown-html"></div>
+          </marked-element>
+        </template>
+      </iron-pages>
+      <button id="copyButton" title="copy to clipboard" on-tap="_copyToClipboard">Copy</button>
+    </div>
+  </template>
+
+  <script>
+    'use strict';
+
+    class VaadinDemoSnippet extends Polymer.GestureEventListeners(Polymer.Element) {
+      static get is() {
+        return 'vaadin-demo-snippet';
+      }
+
+      static get properties() {
+        return {
+          selectedSource: String,
+          sources: {
+            type: Array,
+            observer: '_sourcesChanged'
+          },
+          baseHref: {
+            type: String,
+            value: ''
+          },
+          _sourcesWithMarkdown: Array,
+          _hasAdditionalSources: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      _sourcesChanged() {
+        let liveDemo = this.sources
+          .find(source => source.live);
+
+        if (liveDemo) {
+          // Import and show the live demo component
+          Polymer.importHref(this.baseHref + liveDemo.src, () => {
+            let tagName = liveDemo.src.substr(liveDemo.src.lastIndexOf('/') + 1).replace('.html', '');
+            let element = document.createElement(tagName);
+            this.$.demo.appendChild(element);
+            this.selectedSource = liveDemo.title;
+          }, null, true);
+        }
+
+        Promise.all(
+          this.sources.map(source => {
+            // If demo source is defined inline in the JSON, use that
+            if (source.code) {
+              return new Promise(resolve =>
+                resolve(Object.assign({}, source, { markdown: this._getMarkdown(source.code) }))
+              );
+            } else { // otherwise, fetch from src url
+              return fetch(this.baseHref + source.src)
+                .then(res => res.text())
+                .then(text => {
+                  return Object.assign({}, source, { markdown: this._getMarkdown(text) })
+                });
+            }
+          })
+        )
+          .then(sourcesWithMarkdown => {
+            this._sourcesWithMarkdown = sourcesWithMarkdown;
+            if (sourcesWithMarkdown.length > 0) {
+              // select first by default
+              this.selectedSource = sourcesWithMarkdown[0].title;
+            }
+          })
+          .catch(err => console.log(err));
+
+        // Only show tabs if there's a reason to do so
+        this._hasAdditionalSources = this.sources.length > 1;
+      }
+
+      _getMarkdown(text) {
+        // If there's no template, render empty code.
+        if (!text) { return ''; }
+
+        var snippet = this._unindent(text);
+
+        // Boolean properties are displayed as checked="", so remove the ="" bit.
+        snippet = snippet.replace(/=""/g, '');
+        return '```\n' + snippet + '\n' + '```';
+      }
+
+      _unindent(text) {
+        // Copied from marked-element to avoid having to initialize an extra one up front
+        if (!text) return text;
+        var lines = text.replace(/\t/g, '  ').split('\n');
+        var indent = lines.reduce(function (prev, line) {
+          if (/^\s*$/.test(line)) return prev;  // Completely ignore blank lines.
+
+          var lineIndent = line.match(/^(\s*)/)[0].length;
+          if (prev === null) return lineIndent;
+          return lineIndent < prev ? lineIndent : prev;
+        }, null);
+
+        return lines.map(function (l) { return l.substr(indent); }).join('\n');
+      }
+
+      _copyToClipboard() {
+        // From https://github.com/google/material-design-lite/blob/master/docs/_assets/snippets.js
+        var snipRange = document.createRange();
+        let selectedSource = this.shadowRoot.querySelector('marked-element[active] > .code');
+        snipRange.selectNodeContents(selectedSource);
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(snipRange);
+        var result = false;
+        try {
+          result = document.execCommand('copy');
+          this.$.copyButton.textContent = 'done';
+        } catch (err) {
+          // Copy command is not available
+          console.error(err);
+          this.$.copyButton.textContent = 'error';
+        }
+
+        // Return to the copy button after a second.
+        setTimeout(this._resetCopyButtonState.bind(this), 1000);
+
+        selection.removeAllRanges();
+        return result;
+      }
+
+      _resetCopyButtonState() {
+        this.$.copyButton.textContent = 'copy';
+      }
+    }
+    customElements.define(VaadinDemoSnippet.is, VaadinDemoSnippet);
+  </script>
+
+</dom-module>

@@ -1,0 +1,50 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="vaadin-demo-snippet.html">
+<link rel="import" href="meta-data-updater.html">
+
+<dom-module id="vaadin-demo-page">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+
+    </style>
+
+    <template is="dom-repeat" items="[[demoDescriptor.demos]]" as="demo">
+      <h2>[[demo.name]]</h2>
+      <p class="description">[[demo.description]]</p>
+      <vaadin-demo-snippet sources="[[demo.sources]]" base-href="[[baseHref]]"></vaadin-demo-snippet>
+    </template>
+
+  </template>
+
+  <script>
+    class VaadinDemoPage extends Vaadin.MetaDataUpdater(Polymer.Element) {
+
+      static get is() { return 'vaadin-demo-page'; }
+
+      static get properties() {
+        return {
+          demoDescriptor: Object,
+          active: {
+            type: Boolean,
+            observer: '_activeChanged'
+          },
+          baseHref: String
+        };
+      }
+
+      _activeChanged() {
+        if (this.demoDescriptor && this.active) {
+          this.constructor.updateMetaData(this.demoDescriptor.meta || {});
+        }
+      }
+    }
+
+    customElements.define(VaadinDemoPage.is, VaadinDemoPage);
+  </script>
+</dom-module>

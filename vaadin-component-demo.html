@@ -1,0 +1,65 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="vaadin-demo-page.html">
+
+<dom-module id="vaadin-component-demo">
+  <template>
+    <style>
+       :host {
+        display: block;
+        --paper-tabs-selection-bar-color: #ccc;
+      }
+
+    </style>
+
+    <h1>[[_demoConfig.name]] demos</h1>
+
+    <paper-tabs selected="{{selectedPage}}" attr-for-selected="name">
+      <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
+        <paper-tab name$="[[page.name]]">[[page.name]]</paper-tab>
+      </template>
+    </paper-tabs>
+
+    <iron-pages selected="{{selectedPage}}" attr-for-selected="name" selected-attribute="active">
+      <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
+        <vaadin-demo-page name$="[[page.name]]" demo-descriptor="[[page]]" base-href="[[baseHref]]"></vaadin-demo-page>
+      </template>
+    </iron-pages>
+  </template>
+
+  <script>
+    class VaadinComponentDemo extends Polymer.Element {
+
+      static get is() { return 'vaadin-component-demo'; }
+
+      static get properties() {
+        return {
+          configSrc: {
+            type: String,
+            observer: '_configChanged'
+          },
+          baseHref: String,
+          _demoConfig: Object
+        };
+      }
+
+      _configChanged() {
+        if (this.configSrc) {
+          fetch(this.configSrc)
+            .then(res => res.json())
+            .then(json => {
+              this._demoConfig = json;
+              if (json.pages && json.pages.length > 0) {
+                // Select first page by default
+                this.selectedPage = json.pages[0].name;
+              }
+            });
+        }
+      }
+    }
+
+    window.customElements.define(VaadinComponentDemo.is, VaadinComponentDemo);
+  </script>
+</dom-module>
