@@ -47,7 +47,7 @@
 
       _configChanged() {
         if (this.configSrc) {
-          fetch(this.configSrc)
+          fetch(this.baseHref + '/' + this.configSrc)
             .then(res => res.json())
             .then(json => {
               this._demoConfig = json;

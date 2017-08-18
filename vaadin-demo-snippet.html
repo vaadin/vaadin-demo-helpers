@@ -137,7 +137,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         if (liveDemo) {
           // Import and show the live demo component
-          Polymer.importHref(this.baseHref + liveDemo.src, () => {
+          Polymer.importHref(this.baseHref + '/' + liveDemo.src, () => {
             let tagName = liveDemo.src.substr(liveDemo.src.lastIndexOf('/') + 1).replace('.html', '');
             let element = document.createElement(tagName);
             this.$.demo.appendChild(element);
@@ -153,7 +153,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 resolve(Object.assign({}, source, { markdown: this._getMarkdown(source.code) }))
               );
             } else { // otherwise, fetch from src url
-              return fetch(this.baseHref + source.src)
+              return fetch(this.baseHref + '/' + source.src)
                 .then(res => res.text())
                 .then(text => {
                   return Object.assign({}, source, { markdown: this._getMarkdown(text) })
