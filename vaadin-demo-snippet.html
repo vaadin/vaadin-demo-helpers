@@ -127,7 +127,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return false;
         }
 
-        var snippet = this.$.marked.unindent(template.content);
+        var snippet = this.$.marked.unindent(template.innerHTML);
 
         // Boolean properties are displayed as checked="", so remove the ="" bit.
         snippet = snippet.replace(/=""/g, '');
