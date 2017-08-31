@@ -22,11 +22,7 @@
       </template>
     </paper-tabs>
 
-    <iron-pages selected="{{selectedPage}}" attr-for-selected="name" selected-attribute="active">
-      <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
-        <vaadin-demo-page name$="[[page.name]]" demo-descriptor="[[page]]" base-href="[[baseHref]]"></vaadin-demo-page>
-      </template>
-    </iron-pages>
+    <div id="demo"></div>
   </template>
 
   <script>
@@ -41,6 +37,10 @@
             observer: '_configChanged'
           },
           baseHref: String,
+          selectedPage: {
+            type: String,
+            observer: '_pageChanged'
+          },
           _demoConfig: Object
         };
       }
@@ -58,8 +58,27 @@
             });
         }
       }
-    }
+      // Load and display demos for selected page
+      _pageChanged(selectedPage) {
+        if (!selectedPage) return;
 
+        let page = this._demoConfig.pages.find(page => page.name === selectedPage);
+        if (!page) {
+          console.log(`ERROR: Could not find demo page '${selectedPage}.'`);
+          return;
+        }
+
+        Polymer.importHref(this.baseHref + '/' + page.src,
+          () => {
+            let tagName = page.src.substr(page.src.lastIndexOf('/') + 1).replace('.html', '');
+            let element = document.createElement(tagName);
+            this.$.demo.innerHTML = '';
+            this.$.demo.appendChild(element);
+          }, err => {
+            console.log(`ERROR: Failed to load demo page for '${selectedPage}'`, err);
+          }, true);
+      }
+    }
     window.customElements.define(VaadinComponentDemo.is, VaadinComponentDemo);
   </script>
 </dom-module>
