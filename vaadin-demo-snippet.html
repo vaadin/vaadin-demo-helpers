@@ -133,9 +133,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         snippet = snippet.replace(/=""/g, '');
         this._markdown = '```html\n' + snippet + '\n' + '```';
 
+        this._stampDemoTemplate(template);
       }
 
-      _stampTemplate(template) {
+      _stampDemoTemplate(template) {
         this._templateConstructor = Polymer.Templatize.templatize(template, this, {
           mutableData: true,
           forwardHostProp: function (prop, value) {
