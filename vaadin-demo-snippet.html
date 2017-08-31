@@ -139,6 +139,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _stampDemoTemplate(template) {
         this._templateConstructor = Polymer.Templatize.templatize(template, this, {
           mutableData: true,
+          parentModel: true,
           forwardHostProp: function (prop, value) {
             if (this._templateInstance) {
               this._templateInstance.forwardHostProp(prop, value);
