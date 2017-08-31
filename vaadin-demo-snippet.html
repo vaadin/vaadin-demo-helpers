@@ -83,23 +83,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <prism-highlighter></prism-highlighter>
 
     <div id="demo">
-      <slot></slot>
     </div>
 
     <div class="code-container">
-      <paper-tabs selected="{{selectedSource}}" attr-for-selected="name" hidden$="[[!_hasAdditionalSources]]">
-        <template is="dom-repeat" items="[[_sourcesWithMarkdown]]" as="source">
-          <paper-tab name$="[[source.title]]">[[source.title]]</paper-tab>
-        </template>
-      </paper-tabs>
-
-      <iron-pages selected="{{selectedSource}}" attr-for-selected="name" selected-attribute="active">
-        <template is="dom-repeat" items="[[_sourcesWithMarkdown]]" as="source">
-          <marked-element name$="[[source.title]]" markdown="[[source.markdown]]">
-            <div class="code" slot="markdown-html"></div>
-          </marked-element>
-        </template>
-      </iron-pages>
+      <marked-element markdown="[[_markdown]]" id="marked">
+        <div class="code" slot="markdown-html"></div>
+      </marked-element>
       <button id="copyButton" title="copy to clipboard" on-tap="_copyToClipboard">Copy</button>
     </div>
   </template>
@@ -114,96 +103,55 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get properties() {
         return {
-          selectedSource: String,
-          sources: {
-            type: Array,
-            observer: '_sourcesChanged'
-          },
-          baseHref: {
-            type: String,
-            value: ''
-          },
-          _sourcesWithMarkdown: Array,
-          _hasAdditionalSources: {
-            type: Boolean,
-            value: false
-          }
+          _markdown: String
         };
       }
 
-      _sourcesChanged() {
-        let liveDemo = this.sources
-          .find(source => source.live);
-
-        if (liveDemo) {
-          // Import and show the live demo component
-          Polymer.importHref(this.baseHref + '/' + liveDemo.src, () => {
-            let tagName = liveDemo.src.substr(liveDemo.src.lastIndexOf('/') + 1).replace('.html', '');
-            let element = document.createElement(tagName);
-            this.$.demo.appendChild(element);
-            this.selectedSource = liveDemo.title;
-          }, null, true);
-        }
-
-        Promise.all(
-          this.sources.map(source => {
-            // If demo source is defined inline in the JSON, use that
-            if (source.code) {
-              return new Promise(resolve =>
-                resolve(Object.assign({}, source, { markdown: this._getMarkdown(source.code) }))
-              );
-            } else { // otherwise, fetch from src url
-              return fetch(this.baseHref + '/' + source.src)
-                .then(res => res.text())
-                .then(text => {
-                  return Object.assign({}, source, { markdown: this._getMarkdown(text) })
-                });
-            }
-          })
-        )
-          .then(sourcesWithMarkdown => {
-            this._sourcesWithMarkdown = sourcesWithMarkdown;
-            if (sourcesWithMarkdown.length > 0) {
-              // select first by default
-              this.selectedSource = sourcesWithMarkdown[0].title;
-            }
-          })
-          .catch(err => console.log(err));
-
-        // Only show tabs if there's a reason to do so
-        this._hasAdditionalSources = this.sources.length > 1;
+      ready() {
+        this._showDemo();
       }
 
-      _getMarkdown(text) {
-        // If there's no template, render empty code.
-        if (!text) { return ''; }
+      _showDemo() {
+        let template = this.querySelector('template');
+        if (!template) {
+          let observer = new MutationObserver(() => {
+            if (this.querySelector('template')) {
+              observer.disconnect();
+              this._showDemo();
+            } else {
+              throw new Error('vaadin-demo-snippet requires a <template> child');
+            }
+          })
+          observer.observe(this, { childList: true });
+          return false;
+        }
 
-        var snippet = this._unindent(text);
+        var snippet = this.$.marked.unindent(template.content);
 
         // Boolean properties are displayed as checked="", so remove the ="" bit.
         snippet = snippet.replace(/=""/g, '');
-        return '```\n' + snippet + '\n' + '```';
+        this._markdown = '```html\n' + snippet + '\n' + '```';
+
       }
 
-      _unindent(text) {
-        // Copied from marked-element to avoid having to initialize an extra one up front
-        if (!text) return text;
-        var lines = text.replace(/\t/g, '  ').split('\n');
-        var indent = lines.reduce(function (prev, line) {
-          if (/^\s*$/.test(line)) return prev;  // Completely ignore blank lines.
+      _stampTemplate(template) {
+        this._templateConstructor = Polymer.Templatize.templatize(template, this, {
+          mutableData: true,
+          forwardHostProp: function (prop, value) {
+            if (this._templateInstance) {
+              this._templateInstance.forwardHostProp(prop, value);
+            }
+          }
+        });
 
-          var lineIndent = line.match(/^(\s*)/)[0].length;
-          if (prev === null) return lineIndent;
-          return lineIndent < prev ? lineIndent : prev;
-        }, null);
-
-        return lines.map(function (l) { return l.substr(indent); }).join('\n');
+        this._templateInstance = new this._templateConstructor({});
+        this.$.demo.appendChild(this._templateInstance.root);
       }
 
       _copyToClipboard() {
         // From https://github.com/google/material-design-lite/blob/master/docs/_assets/snippets.js
         var snipRange = document.createRange();
-        let selectedSource = this.shadowRoot.querySelector('marked-element[active] > .code');
+        let selectedSource = this.shadowRoot.querySelector('marked-element > .code');
         snipRange.selectNodeContents(selectedSource);
         var selection = window.getSelection();
         selection.removeAllRanges();
