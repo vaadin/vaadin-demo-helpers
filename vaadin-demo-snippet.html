@@ -151,6 +151,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.demo.appendChild(this._templateInstance.root);
       }
 
+      forwardHostProp(prop, value) {
+        if (this._templateInstance) {
+          this._templateInstance.forwardHostProp(prop, value);
+        }
+      }
+
       _copyToClipboard() {
         // From https://github.com/google/material-design-lite/blob/master/docs/_assets/snippets.js
         var snipRange = document.createRange();
