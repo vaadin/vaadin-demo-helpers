@@ -150,6 +150,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this._templateInstance = new this._templateConstructor({});
         this.$.demo.appendChild(this._templateInstance.root);
 
+        // TODO: This is so very, very wrong.... 🤢🤢
         const hostProps = this.getRootNode().host.constructor.properties;
         for (let prop in hostProps) {
           if (hostProps.hasOwnProperty(prop)) {
