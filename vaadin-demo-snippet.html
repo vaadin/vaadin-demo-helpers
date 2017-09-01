@@ -127,38 +127,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return false;
         }
 
-        var snippet = this.$.marked.unindent(template.innerHTML);
+        let snippet = this.$.marked.unindent(template.innerHTML);
 
         // Boolean properties are displayed as checked="", so remove the ="" bit.
         snippet = snippet.replace(/=""/g, '');
         this._markdown = '```html\n' + snippet + '\n' + '```';
 
-        this._stampDemoTemplate(template);
+        let dom = this.getRootNode().host._stampTemplate(template);
+        this.$.demo.appendChild(dom);
       }
 
-      _stampDemoTemplate(template) {
-        this._templateConstructor = Polymer.Templatize.templatize(template, this.getRootNode().host, {
-          mutableData: true,
-          parentModel: true,
-          forwardHostProp: function (prop, value) {
-            if (this._templateInstance) {
-              this._templateInstance.forwardHostProp(prop, value);
-            }
-          }
-        });
 
-        this._templateInstance = new this._templateConstructor({});
-        this.$.demo.appendChild(this._templateInstance.root);
-
-        // TODO: This is so very, very wrong.... 🤢🤢
-        const hostProps = this.getRootNode().host.constructor.properties;
-        for (let prop in hostProps) {
-          if (hostProps.hasOwnProperty(prop)) {
-            this._templateInstance.set(prop, this.getRootNode().host[prop]);
-            this._templateInstance.notifyPath(prop, this.getRootNode().host[prop], true);
-          }
-        }
-      }
 
       _copyToClipboard() {
         // From https://github.com/google/material-design-lite/blob/master/docs/_assets/snippets.js
