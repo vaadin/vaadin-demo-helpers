@@ -30,7 +30,7 @@
 
     </style>
     <app-location route="{{route}}" url-space-regex="^[[baseHref]]"></app-location>
-    <app-route route="{{route}}" pattern="[[baseHref]]:page" data="{{routeData}}"></app-route>
+    <app-route route="{{route}}" pattern="[[baseHref]]/:page" data="{{routeData}}"></app-route>
 
     <iron-selector selected="{{selectedPage}}" attr-for-selected="name" class="selector" selected-attribute="active">
       <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
