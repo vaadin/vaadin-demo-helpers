@@ -28,7 +28,7 @@
     </style>
     <iron-selector selected="{{selectedPage}}" attr-for-selected="name" class="selector" selected-attribute="active">
       <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
-        <a href$="[[_getLink(page)]]" name$="[[page.name]]">[[page.name]]</a>
+        <a href$="[[_getLink(page.name)]]" name$="[[page.name]]">[[page.name]]</a>
       </template>
     </iron-selector>
 
