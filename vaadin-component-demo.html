@@ -1,7 +1,6 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../polymer/lib/elements/dom-repeat.html">
-<link rel="import" href="../paper-tabs/paper-tabs.html">
-<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../iron-selector/iron-selector.html">
 <link rel="import" href="vaadin-demo-page.html">
 
 <dom-module id="vaadin-component-demo">
@@ -12,15 +11,26 @@
         --paper-tabs-selection-bar-color: #ccc;
       }
 
+      .selector {
+        display: flex;
+      }
+
+      .selector a {
+        text-transform: uppercase;
+        color: var(--primary-text-color, #000);
+        text-decoration: none;
+      }
+
+      .selector a[active] {
+        text-decoration: underline;
+      }
+
     </style>
-
-    <h1>[[_demoConfig.name]] demos</h1>
-
-    <paper-tabs selected="{{selectedPage}}" attr-for-selected="name">
+    <iron-selector selected="{{selectedPage}}" attr-for-selected="name" class="selector" selected-attribute="active">
       <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
-        <paper-tab name$="[[page.name]]">[[page.name]]</paper-tab>
+        <a href$="[[_getLink(page)]]" name$="[[page.name]]">[[page.name]]</a>
       </template>
-    </paper-tabs>
+    </iron-selector>
 
     <div id="demo"></div>
   </template>
@@ -77,6 +87,10 @@
           }, err => {
             console.log(`ERROR: Failed to load demo page for '${selectedPage}'`, err);
           }, true);
+      }
+
+      _getLink(page) {
+        return this.rootPath + page.replace(/\s/, '-').toLowerCase();
       }
     }
     window.customElements.define(VaadinComponentDemo.is, VaadinComponentDemo);
