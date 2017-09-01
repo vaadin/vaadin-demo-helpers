@@ -29,12 +29,12 @@
       }
 
     </style>
-    <app-location route="{{route}}" url-space-regex="^[[rootPath]]"></app-location>
-    <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}"></app-route>
+    <app-location route="{{route}}" url-space-regex="^/[[baseHref]]/"></app-location>
+    <app-route route="{{route}}" pattern="[[baseHref]]:page" data="{{routeData}}"></app-route>
 
     <iron-selector selected="{{selectedPage}}" attr-for-selected="name" class="selector" selected-attribute="active">
       <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
-        <a href$="[[rootPath]][[page.url]]" name$="[[page.url]]">[[page.name]]</a>
+        <a href$="[[baseHref]]/[[page.url]]" name$="[[page.url]]">[[page.name]]</a>
       </template>
     </iron-selector>
 
