@@ -65,8 +65,12 @@
 
       static get observers() {
         return [
-          '_pageChanged(routeData.page)',
+          '_routePageChanged(routeData.page)',
         ];
+      }
+
+      _routePageChanged(page) {
+        this.selectedPage = page;
       }
 
       _configChanged() {
