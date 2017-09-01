@@ -1,6 +1,10 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="../app-route/app-location.html">
+<link rel="import" href="../app-route/app-route.html">
+
+
 <link rel="import" href="vaadin-demo-page.html">
 
 <dom-module id="vaadin-component-demo">
@@ -16,7 +20,6 @@
       }
 
       .selector a {
-        text-transform: uppercase;
         color: var(--primary-text-color, #000);
         text-decoration: none;
       }
@@ -26,9 +29,12 @@
       }
 
     </style>
+    <app-location route="{{route}}" url-space-regex="^[[rootPath]]"></app-location>
+    <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}"></app-route>
+
     <iron-selector selected="{{selectedPage}}" attr-for-selected="name" class="selector" selected-attribute="active">
       <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
-        <a href$="[[_getLink(page.name)]]" name$="[[page.name]]">[[page.name]]</a>
+        <a href$="[[rootPath]][[page.url]]" name$="[[page.url]]">[[page.name]]</a>
       </template>
     </iron-selector>
 
@@ -51,8 +57,16 @@
             type: String,
             observer: '_pageChanged'
           },
-          _demoConfig: Object
+          _demoConfig: Object,
+          routeData: Object,
+          rootPath: String
         };
+      }
+
+      static get observers() {
+        return [
+          '_pageChanged(routeData.page)',
+        ];
       }
 
       _configChanged() {
@@ -68,11 +82,15 @@
             });
         }
       }
-      // Load and display demos for selected page
-      _pageChanged(selectedPage) {
-        if (!selectedPage) return;
 
-        let page = this._demoConfig.pages.find(page => page.name === selectedPage);
+      _pageChanged(selectedPage) {
+        let page;
+        if (selectedPage) {
+          page = this._demoConfig.pages.find(page => page.name === selectedPage)
+        } else {
+          page = this._demoConfig.pages[0];
+        }
+
         if (!page) {
           console.log(`ERROR: Could not find demo page '${selectedPage}.'`);
           return;
@@ -87,10 +105,6 @@
           }, err => {
             console.log(`ERROR: Failed to load demo page for '${selectedPage}'`, err);
           }, true);
-      }
-
-      _getLink(page) {
-        return this.rootPath + page.replace(/\s/, '-').toLowerCase();
       }
     }
     window.customElements.define(VaadinComponentDemo.is, VaadinComponentDemo);
