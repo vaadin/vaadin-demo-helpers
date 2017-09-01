@@ -84,6 +84,8 @@
       }
 
       _pageChanged(selectedPage) {
+        if (!this._demoConfig) return;
+
         let page;
         if (selectedPage) {
           page = this._demoConfig.pages.find(page => page.name === selectedPage)
