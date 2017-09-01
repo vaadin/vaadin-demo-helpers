@@ -1,0 +1,23 @@
+<script>
+  window.addDemoReadyListener = function (demoId, callback) {
+    let listenerFunction = function (evt) {
+      let demo = evt.detail.host.root.querySelector(demoId).root;
+      window.removeEventListener('VaadinDemoReady', listenerFunction);
+      callback(demo);
+    };
+    window.addEventListener('VaadinDemoReady', listenerFunction);
+  };
+
+  DemoReadyEventEmitter = superClass => {
+    return class extends superClass {
+      ready() {
+        super.ready();
+        window.dispatchEvent(new CustomEvent('VaadinDemoReady', {
+          bubbles: true,
+          detail: { host: this }
+        }));
+      }
+    }
+  };
+
+</script>
