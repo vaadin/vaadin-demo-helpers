@@ -1,22 +1,8 @@
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="../polymer/lib/utils/templatize.html">
-<link rel="import" href="../polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../polymer/lib/mixins/gesture-event-listeners.html">
 <link rel="import" href="../marked-element/marked-element.html">
 <link rel="import" href="../prism-element/prism-highlighter.html">
 <link rel="import" href="../prism-element/prism-theme-default.html">
-<link rel="import" href="../paper-tabs/paper-tabs.html">
-<link rel="import" href="../iron-pages/iron-pages.html">
 
 <dom-module id="vaadin-demo-snippet">
   <template>
@@ -136,8 +122,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         let dom = this.getRootNode().host._stampTemplate(template);
         this.$.demo.appendChild(dom);
       }
-
-
 
       _copyToClipboard() {
         // From https://github.com/google/material-design-lite/blob/master/docs/_assets/snippets.js
