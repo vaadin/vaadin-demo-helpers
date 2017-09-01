@@ -92,7 +92,7 @@
 
         let page;
         if (selectedPage) {
-          page = this._demoConfig.pages.find(page => page.name === selectedPage)
+          page = this._demoConfig.pages.find(page => page.url === selectedPage)
         } else {
           page = this._demoConfig.pages[0];
         }
