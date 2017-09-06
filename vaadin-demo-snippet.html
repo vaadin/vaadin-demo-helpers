@@ -36,7 +36,7 @@
         @apply --demo-snippet-code;
       }
 
-      .code {
+      .code-container .code {
         padding: 20px;
         margin: 0;
         background-color: var(--google-grey-100);
@@ -45,12 +45,12 @@
         @apply --demo-snippet-code;
       }
 
-      .code>pre {
+      .code-container .code > pre {
         margin: 0;
         padding: 0 0 10px 0;
       }
 
-      button {
+      .code-container button {
         position: absolute;
         bottom: 0;
         right: 0px;
@@ -58,10 +58,6 @@
         border: none;
         cursor: pointer;
         background: #e0e0e0;
-      }
-
-      paper-tabs[hidden] {
-        display: none;
       }
 
     </style>
