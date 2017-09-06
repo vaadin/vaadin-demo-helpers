@@ -84,6 +84,13 @@
         };
       }
 
+      ready() {
+        super.ready();
+        if (!this.srcBaseHref) {
+          this.srcBaseHref = this.baseHref;
+        }
+      }
+
       static get observers() {
         return [
           '_routePageChanged(routeData.page)',
