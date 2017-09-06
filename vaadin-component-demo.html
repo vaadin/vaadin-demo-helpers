@@ -1,6 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../polymer/lib/elements/dom-repeat.html">
-<link rel="import" href="../iron-selector/iron-selector.html">
 <link rel="import" href="../app-route/app-location.html">
 <link rel="import" href="../app-route/app-route.html">
 
@@ -52,11 +51,9 @@
 
     <nav>
       <ul>
-        <iron-selector selected="{{selectedPage}}" attr-for-selected="name" selected-attribute="active">
-          <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
-            <li><a href$="[[baseHref]]/[[page.url]]" name$="[[page.url]]">[[page.name]]</a></li>
-          </template>
-        </iron-selector>
+        <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
+          <li><a href$="[[baseHref]]/[[page.url]]" name$="[[page.url]]">[[page.name]]</a></li>
+        </template>
       </ul>
     </nav>
 
