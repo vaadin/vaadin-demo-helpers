@@ -15,26 +15,53 @@
         --paper-tabs-selection-bar-color: #ccc;
       }
 
-      .selector a {
-        color: var(--primary-text-color, #000);
+      nav {
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+        0 1px 5px 0 rgba(0, 0, 0, 0.12),
+        0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        padding: 8px 20px 8px 20px;
+        text-transform: uppercase;
+      }
+
+      nav>ul {
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      nav>ul>li {
+        padding: 0 24px 0 0;
+        list-style: none;
+      }
+
+      nav a {
+        text-transform: uppercase;
+        font-weight: 300;
+      }
+
+      nav a {
+        color: var(--primary-color);
         text-decoration: none;
       }
 
-      .selector a[active] {
-        text-decoration: underline;
+      nav a[active] {
+        color: var(--secondary-text-color);
+        font-weight: 500;
       }
 
     </style>
     <app-location route="{{route}}" url-space-regex="^[[baseHref]]"></app-location>
     <app-route route="{{route}}" pattern="[[baseHref]]/:page" data="{{routeData}}"></app-route>
 
-    <ul>
-      <iron-selector selected="{{selectedPage}}" attr-for-selected="name" class="selector" selected-attribute="active">
-        <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
-          <li><a href$="[[baseHref]]/[[page.url]]" name$="[[page.url]]">[[page.name]]</a></li>
-        </template>
-      </iron-selector>
-    </ul>
+    <nav>
+      <ul>
+        <iron-selector selected="{{selectedPage}}" attr-for-selected="name" selected-attribute="active">
+          <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
+            <li><a href$="[[baseHref]]/[[page.url]]" name$="[[page.url]]">[[page.name]]</a></li>
+          </template>
+        </iron-selector>
+      </ul>
+    </nav>
 
     <div id="demo"></div>
   </template>
@@ -50,14 +77,16 @@
             type: String,
             observer: '_configChanged'
           },
+          // Base url for navigation
           baseHref: String,
+          // Base url for resolving relative imports
+          srcBaseHref: String,
           selectedPage: {
             type: String,
             observer: '_pageChanged'
           },
           _demoConfig: Object,
-          routeData: Object,
-          rootPath: String
+          routeData: Object
         };
       }
 
@@ -65,6 +94,16 @@
         return [
           '_routePageChanged(routeData.page)',
         ];
+      }
+
+      ready() {
+        // Use hash for navigation on local, actual url for prod
+        const appLocation = this.root.querySelector('app-location');
+        if (window.location.host.match('vaadin.com')) {
+          appLocation.urlSpaceRegex = '^' + this.baseHref;
+        } else {
+          appLocation.useHashAsPath = true;
+        }
       }
 
       _routePageChanged(page) {
@@ -100,7 +139,7 @@
           return;
         }
 
-        Polymer.importHref(this.baseHref + '/' + page.src,
+        Polymer.importHref(this.srcBaseHref + '/' + page.src,
           () => {
             let tagName = page.src.substr(page.src.lastIndexOf('/') + 1).replace('.html', '');
             let element = document.createElement(tagName);
