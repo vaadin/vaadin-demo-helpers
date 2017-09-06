@@ -97,6 +97,7 @@
       }
 
       ready() {
+        super.ready();
         // Use hash for navigation on local, actual url for prod
         const appLocation = this.root.querySelector('app-location');
         if (window.location.host.match('vaadin.com')) {
