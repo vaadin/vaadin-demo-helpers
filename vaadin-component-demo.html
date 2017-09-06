@@ -123,15 +123,22 @@
           return;
         }
 
-        Polymer.importHref(this.srcBaseHref + '/' + page.src,
-          () => {
-            let tagName = page.src.substr(page.src.lastIndexOf('/') + 1).replace('.html', '');
-            let element = document.createElement(tagName);
-            this.$.demo.innerHTML = '';
-            this.$.demo.appendChild(element);
-          }, err => {
-            console.log(`ERROR: Failed to load demo page for '${selectedPage}'`, err);
-          }, true);
+        if (!window.customElements.get(page.url)) {
+          Polymer.importHref(this.srcBaseHref + '/' + page.src,
+            () => {
+              this._showDemo(page.url);
+            }, err => {
+              console.log(`ERROR: Failed to load demo page for '${selectedPage}'`, err);
+            }, true);
+        } else {
+          this._showDemo(page.url);
+        }
+      }
+
+      _showDemo(tagName) {
+        let element = document.createElement(tagName);
+        this.$.demo.innerHTML = '';
+        this.$.demo.appendChild(element);
       }
     }
     window.customElements.define(VaadinComponentDemo.is, VaadinComponentDemo);
