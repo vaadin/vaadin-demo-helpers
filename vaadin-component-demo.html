@@ -46,7 +46,7 @@
       }
 
     </style>
-    <app-location route="{{route}}"></app-location>
+    <app-location route="{{route}}" url-space-regex="^[[baseHref]]"></app-location>
     <app-route route="{{route}}" pattern="[[baseHref]]/:page" data="{{routeData}}"></app-route>
 
     <nav>
@@ -88,17 +88,6 @@
         return [
           '_routePageChanged(routeData.page)',
         ];
-      }
-
-      ready() {
-        super.ready();
-        // Use hash for navigation on local, actual url for prod
-        const appLocation = this.root.querySelector('app-location');
-        if (window.location.host.match('vaadin.com')) {
-          appLocation.urlSpaceRegex = '^' + this.baseHref;
-        } else {
-          appLocation.useHashAsPath = true;
-        }
       }
 
       _routePageChanged(page) {
