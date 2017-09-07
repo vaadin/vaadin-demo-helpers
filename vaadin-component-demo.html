@@ -46,13 +46,14 @@
       }
 
     </style>
-    <app-location route="{{route}}" url-space-regex="^[[baseHref]]"></app-location>
-    <app-route route="{{route}}" pattern="[[baseHref]]/:page" data="{{routeData}}"></app-route>
+
+    <app-location id="appLocation" route="{{route}}" use-hash-as-path="[[devMode]]"></app-location>
+    <app-route id="appRoute" route="{{route}}" pattern="[[routePattern]]:page" data="{{routeData}}"></app-route>
 
     <nav>
       <ul>
         <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
-          <li><a href$="[[baseHref]]/[[page.url]]" name$="[[page.url]]">[[page.name]]</a></li>
+          <li><a href$="[[linkBase]][[page.url]]" name$="[[page.url]]">[[page.name]]</a></li>
         </template>
       </ul>
     </nav>
@@ -86,9 +87,12 @@
 
       ready() {
         super.ready();
-        if (!this.srcBaseHref) {
-          this.srcBaseHref = this.baseHref;
-        }
+        this.srcBaseHref = this.baseHref;
+
+        // Use hash fragment for navigation if we are using polyserve URL
+        this.devMode = /\/components\//.test(this.baseHref);
+        this.linkBase = !this.devMode ? this.baseHref + '/' : '#'
+        this.routePattern = !this.devMode ? this.linkBase : '';
       }
 
       static get observers() {
@@ -107,16 +111,17 @@
             .then(res => res.json())
             .then(json => {
               this._demoConfig = json;
+              this.selectedPage = undefined;
               if (json.pages && json.pages.length > 0) {
                 // Select first page by default
-                this.selectedPage = json.pages[0].url;
+                this.selectedPage = this.routeData.page || json.pages[0].url;
               }
             });
         }
       }
 
       _pageChanged(selectedPage) {
-        if (!this._demoConfig) return;
+        if (!selectedPage || !this._demoConfig) return;
 
         let page;
         if (selectedPage) {
@@ -147,3 +152,4 @@
     window.customElements.define(VaadinComponentDemo.is, VaadinComponentDemo);
   </script>
 </dom-module>
+
