@@ -78,21 +78,43 @@
           srcBaseHref: String,
           selectedPage: {
             type: String,
-            observer: '_pageChanged'
+            computed: '_isDevMode(baseHref)'
           },
           _demoConfig: Object,
-          routeData: Object
+          routeData: Object,
+          devMode: {
+            type: Boolean,
+            computed: '_isDevMode(baseHref)'
+          },
+          linkBase: {
+            type: String,
+            computed: '_getLinkBase(devMode, baseHref)'
+          },
+          routePattern: {
+            type: String,
+            computed: '_getRoutePattern(devMode, linkBase)'
+          }
         };
+      }
+
+      _isDevMode(baseHref) {
+        return /\/components\//.test(this.baseHref);
+      }
+
+      // Use hash fragment for navigation if we are using polyserve URL
+      _getLinkBase(devMode, baseHref) {
+        return !devMode ? baseHref + '/' : '#'
+      }
+
+      _getRoutePattern(devMode, linkBase) {
+        return !devMode ? linkBase : '';
       }
 
       ready() {
         super.ready();
-        this.srcBaseHref = this.baseHref;
-
-        // Use hash fragment for navigation if we are using polyserve URL
-        this.devMode = /\/components\//.test(this.baseHref);
-        this.linkBase = !this.devMode ? this.baseHref + '/' : '#'
-        this.routePattern = !this.devMode ? this.linkBase : '';
+        if (!this.srcBaseHref) {
+          this.srcBaseHref = this.baseHref;
+        }
       }
 
       static get observers() {
@@ -152,4 +174,3 @@
     window.customElements.define(VaadinComponentDemo.is, VaadinComponentDemo);
   </script>
 </dom-module>
-
