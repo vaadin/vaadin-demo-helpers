@@ -78,7 +78,7 @@
           srcBaseHref: String,
           selectedPage: {
             type: String,
-            computed: '_isDevMode(baseHref)'
+            observer: '_pageChanged'
           },
           _demoConfig: Object,
           routeData: Object,
