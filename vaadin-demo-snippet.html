@@ -112,7 +112,7 @@
 
         // Hide the use of window.addDemoReadyListener
         let snippet = this.$.marked.unindent(template.innerHTML)
-          .replace(/window\.addDemoReadyListener\('[^{]+'/g, `window.addEventListener('WebComponentsReady', function() `);
+          .replace(/window\.addDemoReadyListener\('[^{]+/g, `window.addEventListener('WebComponentsReady', function() `);
 
         // Boolean properties are displayed as checked="", so remove the ="" bit.
         snippet = snippet.replace(/=""/g, '');
