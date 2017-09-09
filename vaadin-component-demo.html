@@ -73,7 +73,12 @@
             observer: '_configChanged'
           },
           // Base url for navigation
-          baseHref: String,
+          baseHref: {
+            type: String,
+            value: function() {
+              return window.location.pathname.replace(/\/([^\/]+\.[^\/]+|)?$/,'');
+            }
+          },
           // Base url for resolving relative imports
           srcBaseHref: String,
           selectedPage: {
@@ -98,7 +103,7 @@
       }
 
       _isDevMode(baseHref) {
-        return /\/components\//.test(this.baseHref);
+        return /\/components\//.test(baseHref);
       }
 
       // Use hash fragment for navigation if we are using polyserve URL
@@ -174,3 +179,4 @@
     window.customElements.define(VaadinComponentDemo.is, VaadinComponentDemo);
   </script>
 </dom-module>
+
