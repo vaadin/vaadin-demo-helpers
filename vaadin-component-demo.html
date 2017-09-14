@@ -79,8 +79,8 @@
           // Base url for navigation
           baseHref: {
             type: String,
-            value: function() {
-              return window.location.pathname.replace(/\/([^\/]+\.[^\/]+|)?$/,'');
+            value: function () {
+              return window.location.pathname.replace(/\/([^\/]+\.[^\/]+|)?$/, '');
             }
           },
           // Base url for resolving relative imports
@@ -148,8 +148,10 @@
               this._demoConfig = json;
               this.selectedPage = undefined;
               if (json.pages && json.pages.length > 0) {
-                // Select first page by default
-                this.selectedPage = this.routeData.page || json.pages[0].url;
+                // Select first page by default and update url
+                if (!this.routeData.page) {
+                  this.routeData.page = json.pages[0].url;
+                }
               }
             });
         }
@@ -187,4 +189,3 @@
     window.customElements.define(VaadinComponentDemo.is, VaadinComponentDemo);
   </script>
 </dom-module>
-
