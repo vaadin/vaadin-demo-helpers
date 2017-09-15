@@ -133,6 +133,8 @@
       }
 
       _routePageChanged(page) {
+        if (!page || this.selectedPage === page) return;
+
         this.selectedPage = page;
         setTimeout(() => {
           Array.from(this.$.nav.querySelectorAll('a')).forEach(e => e.removeAttribute('active'));
@@ -149,8 +151,9 @@
               this.selectedPage = undefined;
               if (json.pages && json.pages.length > 0) {
                 // Select first page by default and update url
+                this.selectedPage = this.routeData.page || json.pages[0].url;
                 if (!this.routeData.page) {
-                  this.routeData.page = json.pages[0].url;
+                  this.$.appLocation.set('path', this.linkBase + this.selectedPage);
                 }
               }
             });
