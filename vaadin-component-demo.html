@@ -41,12 +41,12 @@
       }
 
       nav a {
-        color: var(--primary-color);
+        color: var(--primary-color, #00B4F0);
         text-decoration: none;
       }
 
       nav a[active] {
-        color: var(--secondary-text-color);
+        color: var(--secondary-text-color, #000);
       }
 
     </style>
@@ -153,7 +153,7 @@
                 // Select first page by default and update url
                 this.selectedPage = this.routeData.page || json.pages[0].url;
                 if (!this.routeData.page) {
-                  this.$.appLocation.set('path', this.linkBase + this.selectedPage);
+                  this.$.appLocation.set('path', (this.devMode ? '' : this.linkBase) + this.selectedPage);
                 }
               }
             });
