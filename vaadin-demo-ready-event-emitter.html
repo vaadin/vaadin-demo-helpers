@@ -6,9 +6,11 @@
       // Dont run callback functions if the demo was already run
       if (emitted.indexOf(demoId) < 0) {
         let demo = evt.detail.host.root.querySelector(demoId).root;
-        window.removeEventListener('VaadinDemoReady', listenerFunction);
-        emitted.push(demoId)
-        callback(demo);
+        if (demo) {
+          window.removeEventListener('VaadinDemoReady', listenerFunction);
+          emitted.push(demoId)
+          callback(demo);
+        }
       }
     };
 
@@ -19,13 +21,16 @@
     return class extends superClass {
       ready() {
         super.ready();
-        window.dispatchEvent(new CustomEvent('VaadinDemoReady', {
-          bubbles: true,
-          detail: { host: this }
-        }));
+        // We need to delay since `ready` is executed before `_showDemo` and script tags
+        // might not be loaded yet (non Chrome browsers);
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('VaadinDemoReady', {
+            bubbles: true,
+            detail: { host: this }
+          }));
+        }, 50);
       }
     }
   };
 
 </script>
-
