@@ -107,7 +107,8 @@
       }
 
       _isDevMode(baseHref) {
-        return /\/components\//.test(baseHref);
+        // FIXME: find a better way to detect when demo is running in flow
+        return /^cdn/.test(location.hostname) || /\/components\//.test(baseHref);
       }
 
       // Use hash fragment for navigation if we are using polyserve URL
