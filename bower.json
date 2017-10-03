@@ -1,6 +1,7 @@
 {
   "name": "vaadin-demo-helpers",
   "main": "vaadin-demo-helpers.html",
+  "license": "Apache-2.0",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "marked-element": "PolymerElements/marked-element#^2.2.0",
