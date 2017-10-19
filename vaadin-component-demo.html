@@ -145,9 +145,10 @@
 
       _configChanged() {
         if (this.configSrc) {
-          fetch(this.configSrc)
-            .then(res => res.json())
-            .then(json => {
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = () => {
+            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+              var json = JSON.parse(xhr.responseText);
               this._demoConfig = json;
               this.selectedPage = undefined;
               if (json.pages && json.pages.length > 0) {
@@ -157,7 +158,10 @@
                   this.$.appLocation.set('path', (this.devMode ? '' : this.linkBase) + this.selectedPage);
                 }
               }
-            });
+            }
+          }
+          xhr.open("GET", this.configSrc, true);
+          xhr.send();
         }
       }
 
@@ -166,7 +170,7 @@
 
         let page;
         if (selectedPage) {
-          page = this._demoConfig.pages.find(page => page.url === selectedPage)
+          page = this._demoConfig.pages.filter(page => page.url === selectedPage)[0]
         } else {
           page = this._demoConfig.pages[0];
         }
