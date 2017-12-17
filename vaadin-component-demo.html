@@ -2,6 +2,7 @@
 <link rel="import" href="../polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../app-route/app-location.html">
 <link rel="import" href="../app-route/app-route.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
 
 <dom-module id="vaadin-component-demo-shared-styles">
   <template>
@@ -113,7 +114,8 @@
       </ul>
     </nav>
 
-    <div id="demo"></div>
+    <iron-pages id="demos" selected="[[selectedPage]]" attr-for-selected="tag">
+    </iron-pages>
   </template>
 
   <script>
@@ -201,6 +203,7 @@
             if (xhr.status == 200) {
               var json = JSON.parse(xhr.responseText);
               this._demoConfig = json;
+              this._setDemoPages();
               this.selectedPage = undefined;
               if (json.pages && json.pages.length > 0) {
                 // Select first page by default and update url
@@ -233,16 +236,25 @@
 
         Polymer.importHref(this.srcBaseHref + '/' + page.src,
           () => {
-            this._showDemo(page.url);
+            // ¯\_(ツ)_/¯
           }, err => {
             console.log(`ERROR: Failed to load demo page for '${selectedPage}'`, err);
           }, true);
       }
 
-      _showDemo(tagName) {
-        let element = document.createElement(tagName);
-        this.$.demo.innerHTML = '';
-        this.$.demo.appendChild(element);
+      _setDemoPages() {
+        if (!this._demoConfig.pages) {
+          this.$.demos.innerHTML = '';
+          return;
+        }
+
+        let demos = '';
+        this._demoConfig.pages.map(page => {
+          const tag = page.url;
+          demos += `<${tag} tag="${tag}"></${tag}>`;
+        });
+
+        this.$.demos.innerHTML = demos;
       }
     }
     window.customElements.define(VaadinComponentDemo.is, VaadinComponentDemo);
