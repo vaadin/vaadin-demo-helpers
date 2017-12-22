@@ -3,14 +3,11 @@
 
   window.addDemoReadyListener = function (demoId, callback) {
     let listenerFunction = function (evt) {
-      // Dont run callback functions if the demo was already run
-      if (emitted.indexOf(demoId) < 0) {
-        let demo = evt.detail.host.root.querySelector(demoId).root;
-        if (demo) {
-          window.removeEventListener('VaadinDemoReady', listenerFunction);
-          emitted.push(demoId)
-          callback(demo);
-        }
+      let demo = evt.detail.host.root.querySelector(demoId).root;
+      if (demo) {
+        window.removeEventListener('VaadinDemoReady', listenerFunction);
+        emitted.push(demoId)
+        callback(demo);
       }
     };
 
