@@ -252,12 +252,6 @@
 
         let dom = this.getRootNode().host._stampTemplate(template);
         this.$.demo.appendChild(dom);
-
-        // FIXME: change this workaround by a better approach
-        // In all browsers except chrome, script tags are not executed when stamped
-        if (!/Chrome/.test(window.navigator.userAgent) || window.MSStream) {
-          Array.from(this.$.demo.querySelectorAll('script')).forEach(e => eval(e.textContent));
-        }
       }
 
       _copyToClipboard() {
