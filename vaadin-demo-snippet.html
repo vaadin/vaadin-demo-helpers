@@ -206,7 +206,7 @@
 
   <script>
     'use strict';
-
+    let instanceIndex=0;
     class VaadinDemoSnippet extends Polymer.GestureEventListeners(Polymer.Element) {
       static get is() {
         return 'vaadin-demo-snippet';
@@ -250,6 +250,7 @@
         snippet = snippet.replace(/=""/g, '');
         this._markdown = '```html\n' + snippet + '\n' + '```';
 
+        window.ShadyCSS.prepareTemplate(template, "vaadin-demo-snippet-"+instanceIndex++)
         let dom = this.getRootNode().host._stampTemplate(template);
         this.$.demo.appendChild(dom);
       }
