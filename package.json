@@ -1,6 +1,6 @@
 {
   "name": "vaadin-demo-helpers",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Helper components for showing Vaadin Element demos",
   "main": "vaadin-component-demo.html",
   "repository": "vaadin/vaadin-demo-helpers",
