@@ -110,7 +110,7 @@
 
     <nav id="nav">
       <ul>
-        <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
+        <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page" id="navigationRepeat">
           <li><a href$="[[linkBase]][[page.url]]" name$="[[page.url]]">[[page.name]]</a></li>
         </template>
       </ul>
@@ -156,6 +156,10 @@
           routePattern: {
             type: String,
             computed: '_getRoutePattern(devMode, linkBase)'
+          },
+          navigationRepeatReady: {
+            type: Boolean,
+            value: false
           }
         };
       }
@@ -179,24 +183,28 @@
         if (!this.srcBaseHref) {
           this.srcBaseHref = this.baseHref;
         }
+        this.$.navigationRepeat.addEventListener('dom-change', () => {
+          this.navigationRepeatReady = true;
+        });
       }
 
       static get observers() {
         return [
-          '_routePageChanged(routeData.page)',
+          '_routePageChanged(routeData.page, navigationRepeatReady)',
         ];
       }
 
-      _routePageChanged(page) {
-        if (!page || this.selectedPage === page) return;
+      _routePageChanged(page, navigationRepeatReady) {
+        if (!page) return;
 
         this.selectedPage = page;
-        setTimeout(() => {
+
+        if (navigationRepeatReady) {
           Array.from(this.$.nav.querySelectorAll('a')).forEach(e => e.removeAttribute('active'));
-          let activeLink = this.$.nav.querySelector('a[name="' + page + '"]');
+          const activeLink = this.$.nav.querySelector('a[name="' + page + '"]');
           activeLink.setAttribute('active', '');
           activeLink.scrollIntoView();
-        }, 100);
+        }
       }
 
       _configChanged() {
