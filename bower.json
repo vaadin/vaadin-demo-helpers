@@ -1,6 +1,9 @@
 {
   "name": "vaadin-demo-helpers",
-  "main": "vaadin-demo-helpers.html",
+  "main": [
+    "vaadin-demo-snippet.html",
+    "vaadin-component-demo.html"
+  ],
   "license": "Apache-2.0",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",

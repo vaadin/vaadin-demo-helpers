@@ -1,6 +1,9 @@
 <script>
   var emitted = [];
 
+  /**
+   * @namespace
+   */
   window.addDemoReadyListener = function (demoId, callback) {
     let listenerFunction = function (evt) {
       let demo = evt.detail.host.root.querySelector(demoId).root;
@@ -14,7 +17,10 @@
     window.addEventListener('VaadinDemoReady', listenerFunction);
   };
 
-  DemoReadyEventEmitter = superClass => {
+  /**
+   * @namespace
+   */
+  window.DemoReadyEventEmitter = superClass => {
     return class extends superClass {
       ready() {
         super.ready();

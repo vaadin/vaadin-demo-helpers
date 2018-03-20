@@ -162,7 +162,7 @@
 
       _isDevMode(baseHref) {
         // FIXME: find a better way to detect when demo is running in flow
-        return /^cdn|appspot\.com$/.test(location.hostname) || /\/components\/[a-z\-]+\/demo/.test(baseHref);
+        return /^cdn|appspot\.com$/.test(location.hostname) || /\/components\/[a-z\-\/@]+\/demo/.test(baseHref);
       }
 
       // Use hash fragment for navigation if we are using polyserve URL
