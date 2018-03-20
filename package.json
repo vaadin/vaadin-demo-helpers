@@ -1,5 +1,5 @@
 {
-  "name": "vaadin-demo-helpers",
+  "name": "@vaadin/vaadin-demo-helpers",
   "version": "1.2.5",
   "description": "Helper components for showing Vaadin Element demos",
   "main": "vaadin-component-demo.html",
