@@ -1,0 +1,85 @@
+<script>
+(()=>{
+  'use strict';
+
+  class VaadinDemoIframeRendererOutlet extends HTMLElement {
+    constructor() {
+      super();
+      this.__windowMessageListener = this._onWindowMessage.bind(this);
+      this.__windowPopstateListener = this._onWindowPopstate.bind(this);
+    }
+
+    connectedCallback() {
+      this.history = [];
+      this.historyIdx = 0;
+      this.historyIdxUpdated = false;
+
+      window.addEventListener('message', this.__windowMessageListener);
+      window.addEventListener('popstate', this.__windowPopstateListener);
+    }
+
+    disconnectedCallback() {
+      window.removeEventListener('message', this.__windowMessageListener);
+      window.removeEventListener('popstate', this.__windowPopstateListener);
+    }
+
+    _onWindowMessage(event) {
+      if (event.origin === window.origin) {
+        switch (event.data.type) {
+          case 'set-template':
+            this.innerHTML = event.data.html;
+            this.history = ['/'];
+            this.historyIdx = 0;
+            this.historyIdxUpdated = true;
+            window.history.pushState(null, '', '/');
+            window.dispatchEvent(new PopStateEvent('popstate', {state: null}));
+            break;
+          case 'set-url':
+            this.historyIdx += 1;
+            this.historyIdxUpdated = true;
+            this.history.splice(this.historyIdx, this.history.length - this.historyIdx, event.data.url);
+            window.history.pushState(null, '', event.data.url);
+            window.dispatchEvent(new PopStateEvent('popstate', {state: null}));
+            break;
+          case 'go-back':
+            if (this.historyIdx > 0) {
+              this.historyIdx -= 1;
+              this.historyIdxUpdated = true;
+            }
+            window.history.back();
+            break;
+          case 'go-forward':
+            if (this.historyIdx < this.history.length - 1) {
+              this.historyIdx += 1;
+              this.historyIdxUpdated = true;
+            }
+            window.history.forward();
+            break;
+          default:
+            console.log(`unknown message type: ${event.data.type}`);
+        }
+      }
+    }
+
+    _onWindowPopstate(event) {
+      if (this.historyIdxUpdated) {
+        this.historyIdxUpdated = false;
+      } else {
+        this.historyIdx += 1;
+        this.history.splice(this.historyIdx, this.history.length - this.historyIdx, window.location.pathname);
+      }
+      window.parent.postMessage({
+        type: 'iframe-popstate',
+        instance: window.frameElement.instance,
+        detail: {
+          pathname: window.location.pathname,
+          hasBack: this.historyIdx > 0,
+          hasForward: this.historyIdx < this.history.length - 1
+        }
+      }, window.origin);
+    }
+  }
+
+  window.customElements.define('vaadin-demo-iframe-renderer-outlet', VaadinDemoIframeRendererOutlet);
+})();
+</script>
