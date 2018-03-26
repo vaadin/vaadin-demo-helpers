@@ -70,7 +70,7 @@
       }
       window.parent.postMessage({
         type: 'iframe-popstate',
-        instance: window.frameElement.instance,
+        id: window.frameElement.name,
         detail: {
           pathname: window.location.pathname,
           hasBack: this.historyIdx > 0,
