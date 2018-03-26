@@ -1,0 +1,159 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="vaadin-light-dom-helper.html">
+
+<dom-module id="vaadin-demo-iframe-renderer">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .toolbar {
+        display: flex;
+        background-color: rgba(0, 0, 0, 0.02);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 0.6em;
+      }
+
+      .back,
+      .forward,
+      .url {
+        flex: 0 0 auto;
+        font-size: 16px;
+      }
+
+      .url {
+        flex-grow: 1;
+      }
+
+      #demo {
+        display: block;
+        width: 100%;
+        border: 0;
+      }
+    </style>
+
+    <div class="toolbar">
+      <button class="back" disabled=[[!hasBack]] on-click="_onBackClicked">&lt;</button>
+      <button class="forward" disabled=[[!hasForward]] on-click="_onForwardClicked">&gt;</button>
+      <input class="url" value="[[url]]" on-change="_onUrlEdited">
+    </div>
+    
+    <iframe id="demo" src="[[src]]" instance="[[_instance]]"
+            on-load="_onIframeLoad" on-error="_onIframeError">
+    </iframe>
+  </template>
+
+  <script>
+  (()=>{
+    'use strict';
+    let instanceIndex = 0;
+    class VaadinDemoIframeRenderer extends Polymer.Element {
+      static get is() {
+        return 'vaadin-demo-iframe-renderer';
+      }
+
+      static get properties() {
+        return {
+          src: {
+            type: String,
+            value: 'about:blank'
+          },
+          url: {
+            type: String,
+            value: '/'
+          },
+          hasBack: Boolean,
+          hasForward: Boolean,
+          _instance: String
+        };
+      }
+
+      constructor() {
+        super();
+        this._instance = `${instanceIndex++}`;
+        this.__windowMessageListener = this._onWindowMessage.bind(this);
+        this.__iframeLoaded = new Promise((resolve, reject) => {
+          this.__resolveIframeLoaded = resolve;
+          this.__rejectIframeLoaded = reject;
+        });
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        window.addEventListener('message', this.__windowMessageListener);
+      }
+
+      disconnectedCallback() {
+        window.removeEventListener('message', this.__windowMessageListener);
+        super.disconnectedCallback();
+      }
+
+      ready() {
+        super.ready();
+        Vaadin.LightDomHelper.querySelectorAsync('slot', this)
+          .then(slot => {
+            return Vaadin.LightDomHelper.querySlotContentAsync('template', slot)
+          })
+          .then(template => {
+            this._showDemo(template);
+          })
+          .catch(error => {
+            throw new Error('vaadin-demo-iframe-renderer requires a <template> child');
+          });
+      }
+
+      _onIframeLoad() {
+        this.__resolveIframeLoaded(this.$.demo);
+      }
+
+      _onIframeError(error) {
+        this.__rejectIframeLoaded(error);
+      }
+
+      _postIframeMessage(message) {
+        this.__iframeLoaded.then((iframe) => {
+          iframe.contentWindow.postMessage(message, window.origin);
+        }).catch((error) => {
+          console.log(`demo iframe failed to load: ${error}`)
+        });
+      }
+
+      _onWindowMessage(event) {
+        if (event.origin === window.origin &&
+            event.data.type === 'iframe-popstate' &&
+            event.data.instance === this._instance)
+        {
+          const detail = event.data.detail;
+          this.url = detail.pathname;
+          this.hasBack = detail.hasBack;
+          this.hasForward = detail.hasForward;
+        }
+      }
+
+      _onBackClicked() {
+        this._postIframeMessage({type: 'go-back'});
+      }
+
+      _onForwardClicked() {
+        this._postIframeMessage({type: 'go-forward'});
+      }
+
+      _onUrlEdited(event) {
+        let url = (event.target.value || '').trim();
+        if (url === '') {
+          url = '/';
+        }
+        event.target.value = url;
+        this._postIframeMessage({type: 'set-url', url: url});
+      }
+
+      _showDemo(template) {
+        this._postIframeMessage({type: 'set-template', html: template.innerHTML});
+      }
+    }
+    customElements.define(VaadinDemoIframeRenderer.is, VaadinDemoIframeRenderer);
+  })();
+  </script>
+
+</dom-module>
