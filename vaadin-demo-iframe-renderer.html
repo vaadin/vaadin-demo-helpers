@@ -39,9 +39,7 @@
       <input class="url" value="[[url]]" on-change="_onUrlEdited">
     </div>
     
-    <iframe id="demo" name="[[id]]" src="[[src]]"
-            on-load="_onIframeLoad" on-error="_onIframeError">
-    </iframe>
+    <iframe id="demo" name="[[id]]" src="[[src]]"></iframe>
   </template>
 
   <script>
@@ -77,9 +75,9 @@
       constructor() {
         super();
         this.__windowMessageListener = this._onWindowMessage.bind(this);
-        this.__iframeLoaded = new Promise((resolve, reject) => {
-          this.__resolveIframeLoaded = resolve;
-          this.__rejectIframeLoaded = reject;
+        this.__iframeReady = new Promise((resolve, reject) => {
+          this.__resolveIframeReady = resolve;
+          this.__rejectIframeReady = reject;
         });
       }
 
@@ -107,16 +105,8 @@
           });
       }
 
-      _onIframeLoad() {
-        this.__resolveIframeLoaded(this.$.demo);
-      }
-
-      _onIframeError(error) {
-        this.__rejectIframeLoaded(error);
-      }
-
       _postIframeMessage(message) {
-        this.__iframeLoaded.then((iframe) => {
+        this.__iframeReady.then((iframe) => {
           iframe.contentWindow.postMessage(message, window.origin);
         }).catch((error) => {
           console.log(`demo iframe failed to load: ${error}`)
@@ -128,6 +118,8 @@
             event.data.type === 'iframe-popstate' &&
             event.data.id === this.id)
         {
+          this.__resolveIframeReady(this.$.demo);
+
           const detail = event.data.detail;
           this.url = detail.pathname;
           this.hasBack = detail.hasBack;
