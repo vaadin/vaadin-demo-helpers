@@ -10,17 +10,36 @@
     }
 
     connectedCallback() {
-      this.history = [];
+      this.history = [window.location.pathname];
       this.historyIdx = 0;
       this.historyIdxUpdated = false;
 
       window.addEventListener('message', this.__windowMessageListener);
       window.addEventListener('popstate', this.__windowPopstateListener);
+
+      // notify the parent that the iframe renderer is ready
+      this._postPopstateMessage();
     }
 
     disconnectedCallback() {
       window.removeEventListener('message', this.__windowMessageListener);
       window.removeEventListener('popstate', this.__windowPopstateListener);
+    }
+
+    _postMessage(type, detail) {
+      window.parent.postMessage({
+        type: type,
+        id: window.frameElement.name,
+        detail: detail
+      }, window.origin);
+    }
+
+    _postPopstateMessage() {
+      this._postMessage('iframe-popstate', {
+        pathname: window.location.pathname,
+        hasBack: this.historyIdx > 0,
+        hasForward: this.historyIdx < this.history.length - 1
+      });
     }
 
     _onWindowMessage(event) {
@@ -68,15 +87,7 @@
         this.historyIdx += 1;
         this.history.splice(this.historyIdx, this.history.length - this.historyIdx, window.location.pathname);
       }
-      window.parent.postMessage({
-        type: 'iframe-popstate',
-        id: window.frameElement.name,
-        detail: {
-          pathname: window.location.pathname,
-          hasBack: this.historyIdx > 0,
-          hasForward: this.historyIdx < this.history.length - 1
-        }
-      }, window.origin);
+      this._postPopstateMessage();
     }
   }
 
