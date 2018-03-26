@@ -198,12 +198,12 @@
 
     <div id="demo">
       <template is="dom-if" if="[[_isIframe]]" restamp>
-        <vaadin-demo-iframe-renderer src="[[iframeSrc]]">
+        <vaadin-demo-iframe-renderer src="[[iframeSrc]]" id="[[id]]">
           <slot></slot>
         </vaadin-demo-iframe-renderer>
       </template>
       <template is="dom-if" if="[[!_isIframe]]" restamp>
-        <vaadin-demo-shadow-dom-renderer>
+        <vaadin-demo-shadow-dom-renderer id="[[id]]">
           <slot></slot>
         </vaadin-demo-shadow-dom-renderer>
       </template>
@@ -231,6 +231,12 @@
 
       static get properties() {
         return {
+          id: {
+            type: String,
+            value: () => {
+              return `vaadin-demo-snippet-${instanceIndex++}`;
+            }
+          },
           iframeSrc: String,
           _isIframe: {
             type: Boolean,

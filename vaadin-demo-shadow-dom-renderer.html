@@ -22,6 +22,12 @@
 
       static get properties() {
         return {
+          id: {
+            type: String,
+            value: () => {
+              return `vaadin-demo-shadow-dom-${instanceIndex++}`;
+            }
+          },
         };
       }
 
@@ -40,8 +46,7 @@
       }
 
       _showDemo(template) {
-        const templateId = 'vaadin-demo-shadow-dom-renderer-' + instanceIndex++;
-        window.ShadyCSS.prepareTemplate(template, templateId);
+        window.ShadyCSS.prepareTemplate(template, this.id);
         let dom = this.getRootNode().host._stampTemplate(template);
         this.shadowRoot.appendChild(dom);
       }
