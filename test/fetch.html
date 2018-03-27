@@ -85,6 +85,15 @@
               done();
             });
         });
+
+        (P2 ? it.skip : it)('should attempt to load .js file instead of .html with Polymer 3', done => {
+          element.fetchResource('x-qux.html')
+            .then(e => {
+              expect(e.type).to.eql('load');
+              expect(window.customElements.get('x-qux')).to.be.ok;
+              done();
+            });
+        });
       });
 
       describe('fetch JSON', () => {
