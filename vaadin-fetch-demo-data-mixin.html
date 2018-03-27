@@ -1,0 +1,79 @@
+<link rel="import" href="../polymer/lib/utils/import-href.html">
+
+<script>
+(function() {
+  const version = window['Polymer'] && window['Polymer'].version;
+  const useHtmlImports = version && version.indexOf('2') === 0;
+
+  const loadScript = function(path, onload, onerror) {
+    // let src = processPath(path);
+    let src = path;
+    let script = document.body.querySelector("script[src='" + src + "'][async]");
+
+    if (!script) {
+      script = document.createElement("script");
+      script.setAttribute("src", src);
+      script.async = true;
+
+      script.onreadystatechange = script.onload = e => {
+        script.__dynamicImportLoaded = true;
+        onload(e);
+      }
+
+      script.onerror = function(e) {
+        // In case of an error, remove the script from the document so that it
+        // will be automatically created again the next time
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+        onerror(e);
+      }
+    }
+
+    if (script.parentNode == null) {
+      document.body.appendChild(script);
+      // if the script already loaded, dispatch a fake load event
+      // so that listeners are called and get a proper event argument.
+    } else if (script.__dynamicImportLoaded) {
+      script.dispatchEvent(new Event('load'));
+    }
+  }
+
+  /**
+   * @namespace Vaadin
+   */
+  window.Vaadin = window.Vaadin || {};
+
+  /**
+   * @polymerMixin
+   */
+  Vaadin.FetchDemoDataMixin = superClass => class VaadinFetchDemoDataMixin extends superClass {
+
+    fetchJSON(url) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = (e) => {
+          if (xhr.status == 200) {
+            const json = JSON.parse(xhr.responseText);
+            resolve(json);
+          } else if (xhr.status == 404) {
+            reject(e);
+          }
+        }
+        xhr.open('GET', url);
+        xhr.send();
+      });
+    }
+
+    fetchResource(url) {
+      return new Promise((resolve, reject) => {
+        if (useHtmlImports && url.lastIndexOf('.html') === url.length - 5) {
+          Polymer.importHref(url, resolve, reject, true);
+        } else if (url.lastIndexOf('.js') === url.length - 3) {
+          loadScript(url, resolve, reject);
+        }
+      });
+    }
+  }
+})();
+</script>
