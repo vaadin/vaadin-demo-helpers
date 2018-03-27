@@ -5,37 +5,41 @@
   const version = window['Polymer'] && window['Polymer'].version;
   const useHtmlImports = version && version.indexOf('2') === 0;
 
-  const loadScript = (path, onload, onerror) => {
+  const loadScript = path => {
     let script = document.body.querySelector('script[src="' + path + '"][async]');
 
-    if (!script) {
+    // if the script already loaded, resolve immediately
+    if (script && script.parentNode === document.body && script.__dynamicImportLoaded) {
+      return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
       script = document.createElement('script');
       script.setAttribute('src', path);
-      script.setAttribute('type', 'module');
+
+      // only use ES modules for Polymer 3
+      if (!useHtmlImports) {
+        script.setAttribute('type', 'module');
+      }
+
       script.async = true;
 
       script.onreadystatechange = script.onload = e => {
         script.__dynamicImportLoaded = true;
-        onload(e);
+        resolve(e);
       }
 
-      script.onerror = function(e) {
+      script.onerror = e => {
         // In case of an error, remove the script from the document so that it
         // will be automatically created again the next time
         if (script.parentNode) {
           script.parentNode.removeChild(script);
         }
-        onerror(e);
+        reject(e);
       }
-    }
 
-    if (script.parentNode == null) {
       document.body.appendChild(script);
-      // if the script already loaded, dispatch a fake load event
-      // so that listeners are called and get a proper event argument.
-    } else if (script.__dynamicImportLoaded) {
-      script.dispatchEvent(new Event('load'));
-    }
+    });
   };
 
   /**
@@ -76,7 +80,7 @@
         }
 
         if (url.lastIndexOf('.js') === url.length - 3) {
-          loadScript(url, resolve, reject);
+          loadScript(url).then(resolve).catch(e => reject(e));
         }
       });
     }
