@@ -5,14 +5,12 @@
   const version = window['Polymer'] && window['Polymer'].version;
   const useHtmlImports = version && version.indexOf('2') === 0;
 
-  const loadScript = function(path, onload, onerror) {
-    // let src = processPath(path);
-    let src = path;
-    let script = document.body.querySelector("script[src='" + src + "'][async]");
+  const loadScript = (path, onload, onerror) => {
+    let script = document.body.querySelector('script[src="' + path + '"][async]');
 
     if (!script) {
-      script = document.createElement("script");
-      script.setAttribute("src", src);
+      script = document.createElement('script');
+      script.setAttribute('src', path);
       script.async = true;
 
       script.onreadystatechange = script.onload = e => {
@@ -37,7 +35,7 @@
     } else if (script.__dynamicImportLoaded) {
       script.dispatchEvent(new Event('load'));
     }
-  }
+  };
 
   /**
    * @namespace Vaadin
@@ -52,7 +50,7 @@
     fetchJSON(url) {
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        xhr.onload = (e) => {
+        xhr.onload = e => {
           if (xhr.status == 200) {
             const json = JSON.parse(xhr.responseText);
             resolve(json);
