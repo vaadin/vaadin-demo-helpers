@@ -10,20 +10,64 @@
 
       .toolbar {
         display: flex;
-        background-color: rgba(0, 0, 0, 0.02);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 0.6em;
+        background-color: #f2f3f7;
+        border-bottom: 1px solid #ced0dd;
+        padding: 0.8rem 1rem .8rem .8rem;
       }
 
-      .back,
-      .forward,
-      .url {
+      .back, .forward, .url {
         flex: 0 0 auto;
-        font-size: 16px;
+        height: 30px;
+        box-sizing: border-box;
+      }
+
+      .back, .forward {
+        line-height: 33px;
+        background: #f2f3f7;
+        border: none;
+        width: 30px;
+        transition: all ease-in .1s;
+      }
+
+      .back:hover,
+      .forward:hover {
+        background:#dfe1ea; 
+        border-radius: 3px;
+      }
+
+      .back[disabled], .forward[disabled] {
+        opacity: .5;
+      }
+
+      .back[disabled]:hover,
+      .forward[disabled]:hover {
+        background: none;
+      }
+
+      .back svg,
+      .forward svg{
+        width: 14px;
+        height: auto;
+        
       }
 
       .url {
         flex-grow: 1;
+        border-radius: 3px;
+        outline: none;
+        box-shadow: none;
+        border: 1px solid #ced0dd;
+        padding: 5px 10px;
+        line-height: 30px;
+        font-family: 'Helvetica';
+        font-size: 14px;
+        margin-left: 10px;
+        transition: all ease-in .1s;
+      }
+
+      .url:focus {
+        border: 1px solid #9ec5ef;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,.08);
       }
 
       #demo {
@@ -34,8 +78,21 @@
     </style>
 
     <div class="toolbar">
-      <button class="back" disabled=[[!hasBack]] on-click="_onBackClicked">&lt;</button>
-      <button class="forward" disabled=[[!hasForward]] on-click="_onForwardClicked">&gt;</button>
+      <button class="back" disabled=[[!hasBack]] on-click="_onBackClicked">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+          <title>icon-arrow-left</title>
+          <polyline points="20.6 8 5.62 24.1 20.6 40.2" fill="none" stroke="#686f75" stroke-linecap="round" stroke-miterlimit="10" stroke-width="6"/>
+          <line x1="7.53" y1="24.1" x2="42.33" y2="24.1" fill="none" stroke="#686f75" stroke-linecap="round" stroke-miterlimit="10" stroke-width="6"/>
+        </svg>
+      
+      </button> 
+      <button class="forward" disabled=[[!hasForward]] on-click="_onForwardClicked">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+          <title>icon-arrow-right</title>
+          <polyline points="27.35 40.2 42.33 24.1 27.35 8" fill="none" stroke="#686f75" stroke-linecap="round" stroke-miterlimit="10" stroke-width="6"/>
+          <line x1="40.42" y1="24.1" x2="5.62" y2="24.1" fill="none" stroke="#686f75" stroke-linecap="round" stroke-miterlimit="10" stroke-width="6"/>
+        </svg>
+      </button> 
       <input class="url" value="[[url]]" on-change="_onUrlEdited">
     </div>
     
