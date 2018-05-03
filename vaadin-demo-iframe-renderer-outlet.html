@@ -46,7 +46,7 @@
       if (event.origin === window.origin) {
         switch (event.data.type) {
           case 'set-template':
-            this.innerHTML = event.data.html;
+            this.setInnerHtmlWithScripts(event.data.html);
             this.history = ['/'];
             this.historyIdx = 0;
             this.historyIdxUpdated = true;
@@ -88,6 +88,22 @@
         this.history.splice(this.historyIdx, this.history.length - this.historyIdx, window.location.pathname);
       }
       this._postPopstateMessage();
+    }
+
+    setInnerHtmlWithScripts(html) {
+      this.innerHTML = html;
+      const scripts = this.querySelectorAll('script');
+      for (let i = 0; i < scripts.length; i += 1) {
+        const script = document.createElement('script');
+        ['type', 'async', 'defer', 'noModule', 'text'].forEach(
+          prop => script[prop] = scripts[i][prop]
+        );
+        if (scripts[i].src) {
+          script.src = scripts[i].src;
+        }
+        scripts[i].parentNode.insertBefore(script, scripts[i]);
+        scripts[i].parentNode.removeChild(scripts[i]);
+      }
     }
   }
 
