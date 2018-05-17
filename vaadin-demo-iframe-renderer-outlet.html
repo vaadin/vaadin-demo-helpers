@@ -7,6 +7,19 @@
       super();
       this.__windowMessageListener = this._onWindowMessage.bind(this);
       this.__windowPopstateListener = this._onWindowPopstate.bind(this);
+
+      this.__webComponentsReady = new Promise((resolve, reject) => {
+        if (window.WebComponents.ready) {
+          resolve();
+        } else {
+          function onWebComponentsReady() {
+            document.removeEventListener('WebComponentsReady', onWebComponentsReady);
+            resolve();
+          }
+
+          document.addEventListener('WebComponentsReady', onWebComponentsReady);
+        }
+      });
     }
 
     connectedCallback() {
@@ -46,12 +59,14 @@
       if (event.origin === window.origin) {
         switch (event.data.type) {
           case 'set-template':
-            this.setInnerHtmlWithScripts(event.data.html);
-            this.history = ['/'];
-            this.historyIdx = 0;
-            this.historyIdxUpdated = true;
-            window.history.pushState(null, '', '/');
-            window.dispatchEvent(new PopStateEvent('popstate', {state: null}));
+          this.__webComponentsReady.then(() => {
+              this.setInnerHtmlWithScripts(event.data.html);
+              this.history = ['/'];
+              this.historyIdx = 0;
+              this.historyIdxUpdated = true;
+              window.history.pushState(null, '', '/');
+              window.dispatchEvent(new PopStateEvent('popstate', {state: null}));
+            });
             break;
           case 'set-url':
             this.historyIdx += 1;
