@@ -59,40 +59,41 @@
       if (event.origin === window.origin) {
         switch (event.data.type) {
           case 'set-template':
-          this.__webComponentsReady.then(() => {
+            this.__webComponentsReady.then(() => {
               this.setInnerHtmlWithScripts(event.data.html);
               this.history = ['/'];
-              this.historyIdx = 0;
-              this.historyIdxUpdated = true;
-              window.history.pushState(null, '', '/');
-              window.dispatchEvent(new PopStateEvent('popstate', {state: null}));
+                this._activateHistoryEntry(0);
             });
             break;
           case 'set-url':
-            this.historyIdx += 1;
-            this.historyIdxUpdated = true;
-            this.history.splice(this.historyIdx, this.history.length - this.historyIdx, event.data.url);
-            window.history.pushState(null, '', event.data.url);
-            window.dispatchEvent(new PopStateEvent('popstate', {state: null}));
+            this.history[this.historyIdx + 1] = event.data.url;
+            this.history.length = this.historyIdx + 2; // truncate the array
+            this._activateHistoryEntry(this.historyIdx + 1);
             break;
           case 'go-back':
+            // do not use window.history.back() here because that could affect other iframes
             if (this.historyIdx > 0) {
-              this.historyIdx -= 1;
-              this.historyIdxUpdated = true;
+              this._activateHistoryEntry(this.historyIdx - 1);
             }
-            window.history.back();
             break;
           case 'go-forward':
+            // do not use window.history.forward() here because that could affect other iframes
             if (this.historyIdx < this.history.length - 1) {
-              this.historyIdx += 1;
-              this.historyIdxUpdated = true;
+              this._activateHistoryEntry(this.historyIdx + 1);
             }
-            window.history.forward();
             break;
           default:
-            console.log(`unknown message type: ${event.data.type}`);
+            // no-op
+            // console.log(`unknown message type: ${event.data.type}`);
         }
       }
+    }
+
+    _activateHistoryEntry(historyIdx) {
+      this.historyIdx = historyIdx;
+      this.historyIdxUpdated = true;
+      window.history.pushState(null, document.title, this.history[historyIdx]);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
 
     _onWindowPopstate(event) {
@@ -100,7 +101,8 @@
         this.historyIdxUpdated = false;
       } else {
         this.historyIdx += 1;
-        this.history.splice(this.historyIdx, this.history.length - this.historyIdx, window.location.pathname);
+        this.history[this.historyIdx] = window.location.pathname;
+        this.history.length = this.historyIdx + 1; // truncate the array
       }
       this._postPopstateMessage();
     }
