@@ -36,7 +36,7 @@
 
       .back:hover,
       .forward:hover {
-        background:#dfe1ea; 
+        background:#dfe1ea;
         border-radius: 3px;
       }
 
@@ -53,7 +53,7 @@
       .forward svg{
         width: 14px;
         height: auto;
-        
+
       }
 
       .url {
@@ -89,19 +89,19 @@
           <polyline points="20.6 8 5.62 24.1 20.6 40.2" fill="none" stroke="#686f75" stroke-linecap="round" stroke-miterlimit="10" stroke-width="6"/>
           <line x1="7.53" y1="24.1" x2="42.33" y2="24.1" fill="none" stroke="#686f75" stroke-linecap="round" stroke-miterlimit="10" stroke-width="6"/>
         </svg>
-      
-      </button> 
+
+      </button>
       <button class="forward" disabled=[[!hasForward]] on-click="_onForwardClicked">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
           <title>icon-arrow-right</title>
           <polyline points="27.35 40.2 42.33 24.1 27.35 8" fill="none" stroke="#686f75" stroke-linecap="round" stroke-miterlimit="10" stroke-width="6"/>
           <line x1="40.42" y1="24.1" x2="5.62" y2="24.1" fill="none" stroke="#686f75" stroke-linecap="round" stroke-miterlimit="10" stroke-width="6"/>
         </svg>
-      </button> 
+      </button>
       <input class="url" value="[[url]]" on-change="_onUrlEdited">
     </div>
-    
-    <iframe id="demo" name="[[id]]" src="[[src]]"></iframe>
+
+    <iframe id="demo" name="[[id]]" src="[[src]]" data-demo-components-root$="[[demoComponentsRoot]]"></iframe>
   </template>
 
   <script>
@@ -120,6 +120,9 @@
             value: () => {
               return `vaadin-demo-iframe-${instanceIndex++}`;
             }
+          },
+          demoComponentsRoot: {
+            type: String
           },
           src: {
             type: String,
