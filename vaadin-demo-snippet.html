@@ -76,7 +76,7 @@
 
     <div id="demo">
       <template is="dom-if" if="[[_isIframe]]" restamp>
-        <vaadin-demo-iframe-renderer src="[[iframeSrc]]" id="[[id]]">
+        <vaadin-demo-iframe-renderer src="[[iframeSrc]]" id="[[id]]" demo-components-root="[[demoComponentsRoot]]">
           <slot></slot>
         </vaadin-demo-iframe-renderer>
       </template>
@@ -113,6 +113,7 @@
             }
           },
           iframeSrc: String,
+          demoComponentsRoot: String,
           _isIframe: {
             type: Boolean,
             value: false,
@@ -126,6 +127,13 @@
         super.ready();
         Vaadin.LightDomHelper.querySelectorAsync('template', this)
           .then(template => {
+            try {
+              const host = this.getRootNode().host.getRootNode().host;
+              // set the root directory for lazy loaded elements in demos
+              this.demoComponentsRoot = `${host.srcBaseHref}/demo-elements`;
+            } catch(e) {
+              console.error('Unable to get the `baseHref` from the <vaadin-component-demo>');
+            }
             this._showDemo(template);
           })
           .catch(error => {
