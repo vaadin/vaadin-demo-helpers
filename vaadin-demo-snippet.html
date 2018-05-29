@@ -275,6 +275,9 @@
         let snippet = this.$.marked.unindent(template.innerHTML)
           .replace(/window\.addDemoReadyListener\('[^{]+/g, `window.addEventListener('WebComponentsReady', function() `);
 
+        // Hide the use of window.Vaadin.demoComponentsRoot
+        snippet = snippet.replace(/`(\${window\.Vaadin\.demoComponentsRoot})(.+)`/gi, `'$2'`);
+
         // Remove style-scoped classes that are appended when ShadyDOM is enabled
         Array.from(this.classList).forEach(e => snippet = snippet.replace(new RegExp('\\s*' + e, 'g'), ''));
         snippet = snippet.replace(/ class=""/g, '');
