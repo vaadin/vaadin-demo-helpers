@@ -1,4 +1,6 @@
+<!-- MAGI REMOVE START -->
 <link rel="import" href="../polymer/lib/utils/import-href.html">
+<!-- MAGI REMOVE END -->
 
 <script>
 (function() {
@@ -69,13 +71,13 @@
     }
 
     fetchResource(url) {
-      return new Promise((resolve, reject) => {
-        if (useHtmlImports && url.lastIndexOf('.html') === url.length - 5) {
-          return Polymer.importHref(url, resolve, reject, true);
-        } else if (url.lastIndexOf('.js') === url.length - 3) {
-          loadScript(url).then(resolve).catch(e => reject(e));
-        }
-      });
+      /* MAGI REMOVE START */
+      return useHtmlImports
+        && new Promise((resolve, reject) => Polymer.importHref(url, resolve, reject, true));
+      /* MAGI REMOVE END */
+      /* MAGI ADD START
+      return loadScript(url);
+      MAGI ADD END */
     }
   }
 })();
