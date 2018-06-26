@@ -111,7 +111,8 @@
     _setDemoComponentsRoot() {
       // store the reference for lazy loading
       window.Vaadin = window.Vaadin || {};
-      window.Vaadin.demoComponentsRoot = window.frameElement.dataset.demoComponentsRoot;
+      Vaadin.Demo = Vaadin.Demo || {};
+      Vaadin.Demo.componentsRoot = window.frameElement.dataset.demoComponentsRoot;
     }
 
     setInnerHtmlWithScripts(html) {
