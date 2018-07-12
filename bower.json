@@ -1,9 +1,13 @@
 {
   "name": "vaadin-demo-helpers",
-  "main": "vaadin-demo-helpers.html",
+  "main": [
+    "vaadin-demo-snippet.html",
+    "vaadin-component-demo.html"
+  ],
   "license": "Apache-2.0",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.1.1",
     "marked-element": "PolymerElements/marked-element#^2.2.0",
     "prism-element": "PolymerElements/prism-highlighter#^2.0.1",
     "app-route": "PolymerElements/app-route#^2.0.2",
@@ -11,10 +15,6 @@
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
-    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
-  },
-  "resolutions": {
-    "polymer": "^2.0.0"
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0"
   }
 }

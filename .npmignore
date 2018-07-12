@@ -1,0 +1,8 @@
+bower_components
+demo
+.eslintrc.json
+.stylelintrc
+.travis.yml
+wct.conf.js
+polymer.json
+meta-data-updater.html

@@ -2,6 +2,7 @@
 <link rel="import" href="../polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../app-route/app-location.html">
 <link rel="import" href="../app-route/app-route.html">
+<link rel="import" href="vaadin-fetch-demo-data-mixin.html">
 
 <dom-module id="vaadin-component-demo-shared-styles">
   <template>
@@ -110,7 +111,7 @@
 
     <nav id="nav">
       <ul>
-        <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page">
+        <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page" id="navigationRepeat">
           <li><a href$="[[linkBase]][[page.url]]" name$="[[page.url]]">[[page.name]]</a></li>
         </template>
       </ul>
@@ -120,7 +121,7 @@
   </template>
 
   <script>
-    class VaadinComponentDemo extends Polymer.Element {
+    class VaadinComponentDemo extends Vaadin.FetchDemoDataMixin(Polymer.Element) {
 
       static get is() { return 'vaadin-component-demo'; }
 
@@ -156,13 +157,17 @@
           routePattern: {
             type: String,
             computed: '_getRoutePattern(devMode, linkBase)'
+          },
+          navigationRepeatReady: {
+            type: Boolean,
+            value: false
           }
         };
       }
 
       _isDevMode(baseHref) {
         // FIXME: find a better way to detect when demo is running in flow
-        return /^cdn|appspot\.com$/.test(location.hostname) || /\/components\/[a-z\-]+\/demo/.test(baseHref);
+        return /^cdn|appspot\.com$/.test(location.hostname) || /\/components\/[a-z\-\/@]+\/demo/.test(baseHref);
       }
 
       // Use hash fragment for navigation if we are using polyserve URL
@@ -179,32 +184,34 @@
         if (!this.srcBaseHref) {
           this.srcBaseHref = this.baseHref;
         }
+        this.$.navigationRepeat.addEventListener('dom-change', () => {
+          this.navigationRepeatReady = true;
+        });
       }
 
       static get observers() {
         return [
-          '_routePageChanged(routeData.page)',
+          '_routePageChanged(routeData.page, navigationRepeatReady)',
         ];
       }
 
-      _routePageChanged(page) {
-        if (!page || this.selectedPage === page) return;
+      _routePageChanged(page, navigationRepeatReady) {
+        if (!page) return;
 
         this.selectedPage = page;
-        setTimeout(() => {
+
+        if (navigationRepeatReady) {
           Array.from(this.$.nav.querySelectorAll('a')).forEach(e => e.removeAttribute('active'));
-          let activeLink = this.$.nav.querySelector('a[name="' + page + '"]');
+          const activeLink = this.$.nav.querySelector('a[name="' + page + '"]');
           activeLink.setAttribute('active', '');
           activeLink.scrollIntoView();
-        }, 100);
+        }
       }
 
-      _configChanged() {
-        if (this.configSrc) {
-          var xhr = new XMLHttpRequest();
-          xhr.onload = () => {
-            if (xhr.status == 200) {
-              var json = JSON.parse(xhr.responseText);
+      _configChanged(configSrc) {
+        if (configSrc) {
+          this.fetchJSON(configSrc)
+            .then(json => {
               this._demoConfig = json;
               this.selectedPage = undefined;
               if (json.pages && json.pages.length > 0) {
@@ -214,10 +221,10 @@
                   this.$.appLocation.set('path', (this.devMode ? '' : this.linkBase) + this.selectedPage);
                 }
               }
-            }
-          }
-          xhr.open("GET", this.configSrc);
-          xhr.send();
+            })
+            .catch(err => {
+              console.log(`ERROR: Failed to load demo data for '${configSrc}'`, err);
+            });
         }
       }
 
@@ -236,12 +243,13 @@
           return;
         }
 
-        Polymer.importHref(this.srcBaseHref + '/' + page.src,
-          () => {
+        this.fetchResource(this.srcBaseHref + '/' + page.src)
+          .then(() => {
             this._showDemo(page.url);
-          }, err => {
+          })
+          .catch(err => {
             console.log(`ERROR: Failed to load demo page for '${selectedPage}'`, err);
-          }, true);
+          });
       }
 
       _showDemo(tagName) {
