@@ -33,7 +33,7 @@
         const matchesFn = HTMLElement.prototype.matches
             ? HTMLElement.prototype.matches
             : HTMLElement.prototype.msMatchesSelector;
-            
+
         const query = (slot, selector) => {
           const assignedNodes = slot.assignedNodes();
           for (let i = 0; i < assignedNodes.length; i += 1) {
