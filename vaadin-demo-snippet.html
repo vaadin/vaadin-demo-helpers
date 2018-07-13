@@ -4,6 +4,12 @@
 <link rel="import" href="../prism-element/prism-highlighter.html">
 <link rel="import" href="../vaadin-themable-mixin/vaadin-themable-mixin.html">
 
+<link rel="import" href="vaadin-light-dom-helper.html">
+<link rel="import" href="vaadin-demo-shadow-dom-renderer.html">
+<link rel="import" href="vaadin-demo-iframe-renderer.html">
+
+<script src="vaadin-demo-ready-event-emitter.js"></script>
+
 <dom-module id="vaadin-demo-snippet-default-theme">
   <template>
     <style>
@@ -146,7 +152,6 @@
         display: block;
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         margin: 0;
-        padding: 1.5em;
         @apply --demo-snippet-demo;
       }
 
@@ -193,6 +198,16 @@
     <prism-highlighter></prism-highlighter>
 
     <div id="demo">
+      <template is="dom-if" if="[[_isIframe]]" restamp>
+        <vaadin-demo-iframe-renderer src="[[iframeSrc]]" id="[[id]]" demo-components-root="[[demoComponentsRoot]]">
+          <slot></slot>
+        </vaadin-demo-iframe-renderer>
+      </template>
+      <template is="dom-if" if="[[!_isIframe]]" restamp>
+        <vaadin-demo-shadow-dom-renderer id="[[id]]">
+          <slot></slot>
+        </vaadin-demo-shadow-dom-renderer>
+      </template>
     </div>
 
     <div class="code-container">
@@ -204,6 +219,7 @@
   </template>
 
   <script>
+  (()=>{
     'use strict';
     let instanceIndex = 0;
     class VaadinDemoSnippet extends
@@ -216,33 +232,55 @@
 
       static get properties() {
         return {
+          id: {
+            type: String,
+            value: () => {
+              return `vaadin-demo-snippet-${instanceIndex++}`;
+            }
+          },
+          iframeSrc: String,
+          demoComponentsRoot: String,
+          _isIframe: {
+            type: Boolean,
+            value: false,
+            computed: '_computeIsIframe(iframeSrc)'
+          },
           _markdown: String
         };
       }
 
       ready() {
         super.ready();
-        this._showDemo();
+        Vaadin.LightDomHelper.querySelectorAsync('template', this)
+          .then(template => {
+            try {
+              const host = this.getRootNode().host.getRootNode().host;
+              // set the root directory for lazy loaded elements in demos
+              this.demoComponentsRoot = `${host.srcBaseHref}/demo-elements`;
+            } catch(e) {
+              console.error('Unable to get the `baseHref` from the <vaadin-component-demo>');
+            }
+            this._showDemo(template);
+          })
+          .catch(error => {
+            throw new Error('vaadin-demo-snippet requires a <template> child');
+          })
       }
 
-      _showDemo() {
-        let template = this.querySelector('template');
-        if (!template) {
-          let observer = new MutationObserver(() => {
-            if (this.querySelector('template')) {
-              observer.disconnect();
-              this._showDemo();
-            } else {
-              throw new Error('vaadin-demo-snippet requires a <template> child');
-            }
-          })
-          observer.observe(this, { childList: true });
-          return false;
-        }
+      _computeIsIframe(iframeSrc) {
+        return (typeof iframeSrc === 'string') && iframeSrc.trim() !== '';
+      }
 
+      _showDemo(template) {
         // Hide the use of window.addDemoReadyListener
         let snippet = this.$.marked.unindent(template.innerHTML)
           .replace(/window\.addDemoReadyListener\('[^{]+/g, `window.addEventListener('WebComponentsReady', function() `);
+
+        // Hide the use of window.Vaadin.demoComponentsRoot
+        snippet = snippet.replace(/`(\${Vaadin\.Demo\.componentsRoot})(.+)`/gi, `'$2'`);
+
+        // Hide the use of window.__importModule for dynamic imports
+        snippet = snippet.replace(/(Vaadin\.Demo\.import\(')/gi, `import('.`);
 
         // Remove style-scoped classes that are appended when ShadyDOM is enabled
         Array.from(this.classList).forEach(e => snippet = snippet.replace(new RegExp('\\s*' + e, 'g'), ''));
@@ -251,10 +289,6 @@
         // Boolean properties are displayed as checked="", so remove the ="" bit.
         snippet = snippet.replace(/=""/g, '');
         this._markdown = '```html\n' + snippet.trim() + '```';
-
-        window.ShadyCSS.prepareTemplate(template, 'vaadin-demo-snippet-' + instanceIndex++);
-        let dom = this.getRootNode().host._stampTemplate(template);
-        this.$.demo.appendChild(dom);
       }
 
       _copyToClipboard() {
@@ -287,6 +321,7 @@
       }
     }
     customElements.define(VaadinDemoSnippet.is, VaadinDemoSnippet);
+  })();
   </script>
 
 </dom-module>
