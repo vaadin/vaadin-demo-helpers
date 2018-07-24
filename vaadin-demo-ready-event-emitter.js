@@ -7,7 +7,7 @@ window.addDemoReadyListener = function (demoId, callback) {
     if (sdRenderer) {
       window.removeEventListener('VaadinDemoReady', listenerFunction);
       emitted.push(demoId);
-      callback(sdRenderer.shadowRoot);
+      callback(sdRenderer.shadowRoot, snippet.querySelector('template').content);
     }
   };
 
