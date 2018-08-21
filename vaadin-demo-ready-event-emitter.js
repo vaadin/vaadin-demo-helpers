@@ -2,11 +2,12 @@ var emitted = [];
 
 window.addDemoReadyListener = function (demoId, callback) {
   let listenerFunction = function (evt) {
-    let demo = evt.detail.host.root.querySelector(demoId).root;
-    if (demo) {
+    const snippet = evt.detail.host.shadowRoot.querySelector(demoId);
+    const sdRenderer = snippet.shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer');
+    if (sdRenderer) {
       window.removeEventListener('VaadinDemoReady', listenerFunction);
       emitted.push(demoId);
-      callback(demo);
+      callback(sdRenderer.shadowRoot, snippet.querySelector('template').content);
     }
   };
 
