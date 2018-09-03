@@ -205,7 +205,8 @@ MAGI ADD END -->
 
     <div id="demo">
       <template is="dom-if" if="[[_isIframe]]" restamp>
-        <vaadin-demo-iframe-renderer src="[[iframeSrc]]" id="[[id]]" demo-components-root="[[demoComponentsRoot]]">
+        <vaadin-demo-iframe-renderer src="[[iframeSrc]]" id="[[id]]" demo-components-root="[[demoComponentsRoot]]"
+          no-toolbar="[[noToolbar]]">
           <slot></slot>
         </vaadin-demo-iframe-renderer>
       </template>
@@ -246,6 +247,7 @@ MAGI ADD END -->
           },
           iframeSrc: String,
           demoComponentsRoot: String,
+          noToolbar: Boolean,
           _isIframe: {
             type: Boolean,
             value: false,
