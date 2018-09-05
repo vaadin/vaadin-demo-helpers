@@ -16,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/vaadin/vaadin-demo-helpers/issues"
   },
-  "homepage": "https://github.com/vaadin/vaadin-demo-helpers"
+  "homepage": "https://github.com/vaadin/vaadin-demo-helpers",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "release": "npm install -g magi-cli polymer-modulizer && semantic-release"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^3.0.0",
+    "@semantic-release/exec": "^3.1.2",
+    "semantic-release": "^15.9.12"
+  }
 }
