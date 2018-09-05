@@ -44,7 +44,7 @@
         type: type,
         id: window.frameElement.name,
         detail: detail
-      }, window.origin);
+      }, window.location.origin);
     }
 
     _postPopstateMessage() {
@@ -56,7 +56,7 @@
     }
 
     _onWindowMessage(event) {
-      if (event.origin === window.origin) {
+      if (event.origin === window.location.origin) {
         switch (event.data.type) {
           case 'set-template':
             this.__webComponentsReady.then(() => {

@@ -175,14 +175,14 @@
 
       _postIframeMessage(message) {
         this.__iframeReady.then((iframe) => {
-          iframe.contentWindow.postMessage(message, window.origin);
+          iframe.contentWindow.postMessage(message, window.location.origin);
         }).catch((error) => {
           console.log(`demo iframe failed to load: ${error}`)
         });
       }
 
       _onWindowMessage(event) {
-        if (event.origin === window.origin &&
+        if (event.origin === window.location.origin &&
             event.data.type === 'iframe-popstate' &&
             event.data.id === this.id)
         {
