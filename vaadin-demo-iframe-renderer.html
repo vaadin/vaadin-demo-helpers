@@ -16,6 +16,10 @@
         border-bottom: 1px solid #ced0dd;
         padding: 0.8rem 1rem .8rem .8rem;
       }
+      
+      [hidden] {
+        display: none;
+      }
 
       .back, .forward, .url {
         flex: none;
@@ -85,7 +89,7 @@
       }
     </style>
 
-    <div class="toolbar">
+    <div class="toolbar" hidden$=[[noToolbar]]>
       <button class="back" disabled=[[!hasBack]] on-click="_onBackClicked">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
           <title>icon-arrow-left</title>
@@ -136,7 +140,8 @@
             value: '/'
           },
           hasBack: Boolean,
-          hasForward: Boolean
+          hasForward: Boolean,
+          noToolbar: Boolean
         };
       }
 
