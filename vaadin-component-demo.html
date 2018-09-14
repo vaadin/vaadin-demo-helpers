@@ -57,9 +57,21 @@
   </template>
 </dom-module>
 
-<dom-module id="vaadin-component-demo">
+<dom-module id="component-demo-tabs-styles">
   <template>
     <style>
+      vaadin-tab a {
+        text-decoration: none;
+        outline: none;
+        color: inherit;
+      }
+    </style>
+  </template>
+</dom-module>
+
+<dom-module id="vaadin-component-demo">
+  <template>
+    <style include="component-demo-tabs-styles">
       :host {
         display: block;
         max-width: 60em;
@@ -73,7 +85,7 @@
 
     <vaadin-tabs selected="{{selectedPageIndex}}">
       <template is="dom-repeat" items="[[_demoConfig.pages]]" as="page" id="navigationRepeat">
-        <vaadin-tab>[[page.name]]</vaadin-tab>
+        <vaadin-tab><a href="[[linkBase]][[page.url]]" tabindex="-1">[[page.name]]</a></vaadin-tab>
       </template>
     </vaadin-tabs>
 
@@ -189,7 +201,7 @@
           console.log(`ERROR: Could not find demo page with index: '${selectedPageIndex}.'`);
           return;
         }
-        
+
         this.fetchResource(this.srcBaseHref + '/' + page.src)
           .then(() => {
             this._showDemo(page.url);
