@@ -259,6 +259,18 @@ MAGI ADD END -->
 
       ready() {
         super.ready();
+
+        if (this.hasAttribute('ignore-ie') && !!navigator.userAgent.match(/Trident/)) {
+          let node = this.previousSibling;
+          while (!(node instanceof VaadinDemoSnippet)) {
+            let drop = node;
+            node = node.previousSibling;
+            drop.parentNode.removeChild(drop);
+          }
+          this.parentNode.removeChild(this);
+          return;
+        }
+
         Vaadin.LightDomHelper.querySelectorAsync('template', this)
           .then(template => {
             try {
