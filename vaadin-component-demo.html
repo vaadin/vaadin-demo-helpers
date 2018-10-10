@@ -74,7 +74,7 @@
       }
     </style>
 
-    <app-location id="appLocation" route="{{route}}" use-hash-as-path="[[devMode]]"></app-location>
+    <app-location id="appLocation" route="{{route}}" use-hash-as-path="[[devMode]]" url-space-regex="[[urlSpaceRegex]]"></app-location>
     <app-route id="appRoute" route="{{route}}" pattern="[[routePattern]]:page" data="{{routeData}}"></app-route>
 
     <vaadin-tabs selected="{{selectedPageIndex}}">
@@ -108,6 +108,8 @@
           srcBaseHref: String,
           _demoConfig: Object,
           routeData: Object,
+          // Navigation url scope regex
+          urlSpaceRegex: String,
           devMode: {
             type: Boolean,
             computed: '_isDevMode(baseHref)'
@@ -145,6 +147,9 @@
         super.ready();
         if (!this.srcBaseHref) {
           this.srcBaseHref = this.baseHref;
+        }
+        if (!this.urlSpaceRegex) {
+          this.urlSpaceRegex = this.baseHref.replace(/\//g, '\\/');
         }
       }
 
