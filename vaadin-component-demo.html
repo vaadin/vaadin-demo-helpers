@@ -106,7 +106,7 @@
 
     </style>
 
-    <app-location id="appLocation" route="{{route}}" use-hash-as-path="[[devMode]]"></app-location>
+    <app-location id="appLocation" route="{{route}}" use-hash-as-path="[[devMode]]" url-space-regex="[[urlSpaceRegex]]"></app-location>
     <app-route id="appRoute" route="{{route}}" pattern="[[routePattern]]:page" data="{{routeData}}"></app-route>
 
     <nav id="nav">
@@ -146,6 +146,8 @@
           },
           _demoConfig: Object,
           routeData: Object,
+          // Navigation url scope regex
+          urlSpaceRegex: String,
           devMode: {
             type: Boolean,
             computed: '_isDevMode(baseHref)'
@@ -187,6 +189,9 @@
         this.$.navigationRepeat.addEventListener('dom-change', () => {
           this.navigationRepeatReady = true;
         });
+        if (!this.urlSpaceRegex) {
+          this.urlSpaceRegex = this.baseHref.replace(/\//g, '\\/');
+        }
       }
 
       static get observers() {
