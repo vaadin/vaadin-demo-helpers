@@ -183,10 +183,14 @@ MAGI ADD END -->
         margin: 0;
       }
 
-      .code-container button {
+      .copy-button-container {
+        text-align: right;
+      }
+
+      #copyButton {
         position: absolute;
-        top: 0.5em;
-        right: 0.5em;
+        margin: 0.5em 0 0 -0.5em;
+        transform: translateX(-100%);
         text-transform: uppercase;
         border: none;
         border-radius: 0.25em;
@@ -195,9 +199,9 @@ MAGI ADD END -->
         color: #fff;
       }
 
-      .code-container button:focus,
-      .code-container button:hover {
-        background: rgba(0, 0, 0, 0.6);
+      #copyButton:focus,
+      #copyButton:hover {
+        background: rgba(187, 170, 170, 0.6);
       }
     </style>
 
@@ -217,11 +221,13 @@ MAGI ADD END -->
       </template>
     </div>
 
+    <div class="copy-button-container">
+      <button id="copyButton" title="copy to clipboard" on-tap="_copyToClipboard">Copy</button>
+    </div>
     <div class="code-container">
       <marked-element markdown="[[_markdown]]" id="marked">
         <div class="code" slot="markdown-html"></div>
       </marked-element>
-      <button id="copyButton" title="copy to clipboard" on-tap="_copyToClipboard">Copy</button>
     </div>
   </template>
 
