@@ -1,7 +1,7 @@
 var emitted = [];
 
-window.addDemoReadyListener = function (demoId, callback) {
-  let listenerFunction = function (evt) {
+window.addDemoReadyListener = function(demoId, callback) {
+  const listenerFunction = function(evt) {
     const snippet = evt.detail.host.shadowRoot.querySelector(demoId);
     const sdRenderer = snippet.shadowRoot.querySelector('vaadin-demo-shadow-dom-renderer');
     if (sdRenderer) {
@@ -23,10 +23,10 @@ window.DemoReadyEventEmitter = superClass => {
       setTimeout(() => {
         window.dispatchEvent(new CustomEvent('VaadinDemoReady', {
           bubbles: true,
-          detail: { host: this }
+          detail: {host: this}
         }));
       }, 50);
     }
-  }
+  };
 };
 

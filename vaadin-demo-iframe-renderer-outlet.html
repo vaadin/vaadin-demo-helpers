@@ -1,5 +1,5 @@
 <script>
-(()=>{
+(() => {
   'use strict';
 
   class VaadinDemoIframeRendererOutlet extends HTMLElement {
@@ -12,10 +12,10 @@
         if (window.WebComponents.ready) {
           resolve();
         } else {
-          function onWebComponentsReady() {
+          const onWebComponentsReady = () => {
             document.removeEventListener('WebComponentsReady', onWebComponentsReady);
             resolve();
-          }
+          };
 
           document.addEventListener('WebComponentsReady', onWebComponentsReady);
         }
@@ -63,7 +63,7 @@
               this._setDemoComponentsRoot();
               this.setInnerHtmlWithScripts(event.data.html);
               this.history = ['/'];
-                this._activateHistoryEntry(0);
+              this._activateHistoryEntry(0);
             });
             break;
           case 'set-url':

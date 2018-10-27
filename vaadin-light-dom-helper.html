@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/lib/utils/flattened-nodes-observer.html">
 
 <script>
-  (()=>{
+  (() => {
     'use strict';
     window.Vaadin = window.Vaadin || {};
 
@@ -11,28 +11,28 @@
           context = document;
         }
         return new Promise((resolve, reject) => {
-          let element = context.querySelector(selector);
+          const element = context.querySelector(selector);
           if (element) {
             resolve(element);
           } else {
-            let observer = new MutationObserver(() => {
-              let element = context.querySelector(selector);
+            const observer = new MutationObserver(() => {
+              const element = context.querySelector(selector);
               if (element) {
                 observer.disconnect();
                 resolve(element);
               } else {
                 reject('no element matched the selector even after the first observed mutation');
               }
-            })
-            observer.observe(context, { childList: true });
+            });
+            observer.observe(context, {childList: true});
           }
         });
       },
 
       querySlotContentAsync(selector, slot) {
         const matchesFn = HTMLElement.prototype.matches
-            ? HTMLElement.prototype.matches
-            : HTMLElement.prototype.msMatchesSelector;
+          ? HTMLElement.prototype.matches
+          : HTMLElement.prototype.msMatchesSelector;
 
         const query = (slot, selector) => {
           const assignedNodes = slot.assignedNodes();
@@ -47,12 +47,12 @@
         };
 
         return new Promise((resolve, reject) => {
-          let element = query(slot, selector);
+          const element = query(slot, selector);
           if (element) {
             resolve(element);
           } else {
-            let observer = new Polymer.FlattenedNodesObserver(slot, (info) => {
-              let element = query(slot, selector);
+            const observer = new Polymer.FlattenedNodesObserver(slot, (info) => {
+              const element = query(slot, selector);
               if (element) {
                 observer.disconnect();
                 resolve(element);
