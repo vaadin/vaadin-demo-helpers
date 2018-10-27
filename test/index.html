@@ -6,13 +6,16 @@
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
+    <script src="test-suites.js"></script>
   </head>
   <body>
     <script>
-      // Load and run all tests (.html, .js):
-      WCT.loadSuites([
-        'fetch.html'
-      ]);
+      WCT.loadSuites(
+        window.VaadinDemoHelpersSuites
+          .reduce(function(suites, suite) {
+            return suites.concat([suite, `${suite}?wc-shadydom=true`]);
+          }, [])
+      );
     </script>
 
 </body></html>

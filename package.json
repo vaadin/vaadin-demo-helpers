@@ -16,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/vaadin/vaadin-demo-helpers/issues"
   },
-  "homepage": "https://github.com/vaadin/vaadin-demo-helpers"
+  "homepage": "https://github.com/vaadin/vaadin-demo-helpers",
+  "files": [
+    "vaadin-*.js"
+  ],
+  "scripts": {
+    "test": "wct"
+  },
+  "devDependencies": {
+    "@vaadin/vaadin-component-dev-dependencies": "^1.0.0"
+  }
 }
