@@ -11,24 +11,20 @@
       }
 
       /**
-      * Updates 
+      * Updates
       */
       static updateMetaData(metaData) {
         this.metaDataProperties.forEach(prop => {
           let metaTag = document.head.querySelector(`meta[property="og:${prop}"]`);
-          let propertyContent = metaData[prop];
+          const propertyContent = metaData[prop];
 
           // if we have a tag from before, update it
           if (metaTag && propertyContent) {
             metaTag.setAttribute('property', `og:${prop}`);
             metaTag.setAttribute('content', propertyContent);
-          }
-          // if we have a tag but no new content for it, remove it
-          else if (metaTag && !propertyContent) {
+          } else if (metaTag && !propertyContent) { // if we have a tag but no new content for it, remove it
             document.head.removeChild(metaTag);
-          }
-          // if we have content, but no tag from before, create and append
-          else if (!metaTag && propertyContent) {
+          } else if (!metaTag && propertyContent) { // if we have content, but no tag from before, create and append
             metaTag = document.createElement('meta');
             metaTag.setAttribute('property', `og:${prop}`);
             metaTag.setAttribute('content', propertyContent);
@@ -40,13 +36,11 @@
             document.title = propertyContent || '';
           }
         });
-
-
       }
 
       static createMetaTagFor(prop) {
-        let tag = document.createElement('meta');
-        tag.setAttribute(`og:${prop}`)
+        const tag = document.createElement('meta');
+        tag.setAttribute(`og:${prop}`);
       }
     };
 

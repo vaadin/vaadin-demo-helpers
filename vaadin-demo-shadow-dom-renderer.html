@@ -12,7 +12,7 @@
   </template>
 
   <script>
-  (()=>{
+  (() => {
     'use strict';
     let instanceIndex = 0;
     class VaadinDemoShadowDomRenderer extends Polymer.Element {
@@ -35,7 +35,7 @@
         super.ready();
         Vaadin.LightDomHelper.querySelectorAsync('slot', this)
           .then(slot => {
-            return Vaadin.LightDomHelper.querySlotContentAsync('template', slot)
+            return Vaadin.LightDomHelper.querySlotContentAsync('template', slot);
           })
           .then(template => {
             this._showDemo(template);
@@ -47,7 +47,7 @@
 
       _showDemo(template) {
         window.ShadyCSS.prepareTemplate(template, this.id);
-        let dom = this.getRootNode().host._stampTemplate(template);
+        const dom = this.getRootNode().host._stampTemplate(template);
         this.shadowRoot.appendChild(dom);
       }
     }

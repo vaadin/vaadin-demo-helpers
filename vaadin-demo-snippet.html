@@ -46,13 +46,17 @@ MAGI ADD END -->
         hyphens: none;
     }
 
-    pre[class*="lang-"]::-moz-selection, pre[class*="lang-"] ::-moz-selection,
-    code[class*="lang-"]::-moz-selection, code[class*="lang-"] ::-moz-selection {
+    pre[class*="lang-"]::-moz-selection,
+    pre[class*="lang-"] ::-moz-selection,
+    code[class*="lang-"]::-moz-selection,
+    code[class*="lang-"] ::-moz-selection {
         background: #b3d4fc;
     }
 
-    pre[class*="lang-"]::selection, pre[class*="lang-"] ::selection,
-    code[class*="lang-"]::selection, code[class*="lang-"] ::selection {
+    pre[class*="lang-"]::selection,
+    pre[class*="lang-"] ::selection,
+    code[class*="lang-"]::selection,
+    code[class*="lang-"] ::selection {
         background: #b3d4fc;
     }
 
@@ -61,27 +65,25 @@ MAGI ADD END -->
         padding: 1em;
         margin: .5em 0;
         overflow: auto;
-        border: 1px solid #dddddd;
+        border: 1px solid #ddd;
         background-color: white;
-    }
-
-    :not(pre) > code[class*="lang-"],
-    pre[class*="lang-"] {
     }
 
     /* Inline code */
     :not(pre) > code[class*="lang-"] {
         padding: .2em;
-        padding-top: 1px; padding-bottom: 1px;
+        padding-top: 1px;
+        padding-bottom: 1px;
         background: #f8f8f8;
-        border: 1px solid #dddddd;
+        border: 1px solid #ddd;
     }
 
     .token.comment,
     .token.prolog,
     .token.doctype,
     .token.cdata {
-        color: #999988; font-style: italic;
+        color: #998;
+        font-style: italic;
     }
 
     .token.namespace {
@@ -92,6 +94,7 @@ MAGI ADD END -->
     .token.attr-value {
         color: #e3116c;
     }
+
     .token.punctuation,
     .token.operator {
         color: #393A34; /* no highlight */
@@ -226,7 +229,7 @@ MAGI ADD END -->
   </template>
 
   <script>
-  (()=>{
+  (() => {
     'use strict';
     let instanceIndex = 0;
     class VaadinDemoSnippet extends
@@ -263,7 +266,7 @@ MAGI ADD END -->
         if (this.hasAttribute('ignore-ie') && !!navigator.userAgent.match(/Trident/)) {
           let node = this.previousSibling;
           while (!(node instanceof VaadinDemoSnippet)) {
-            let drop = node;
+            const drop = node;
             node = node.previousSibling;
             drop.parentNode.removeChild(drop);
           }
@@ -277,14 +280,14 @@ MAGI ADD END -->
               const host = this.getRootNode().host.getRootNode().host;
               // set the root directory for lazy loaded elements in demos
               this.demoComponentsRoot = `${host.srcBaseHref}/demo-elements`;
-            } catch(e) {
+            } catch (e) {
               console.error('Unable to get the `baseHref` from the <vaadin-component-demo>');
             }
             this._showDemo(template);
           })
           .catch(error => {
             throw new Error('vaadin-demo-snippet requires a <template> child');
-          })
+          });
       }
 
       _computeIsIframe(iframeSrc) {
@@ -313,13 +316,13 @@ MAGI ADD END -->
 
       _copyToClipboard() {
         // From https://github.com/google/material-design-lite/blob/master/docs/_assets/snippets.js
-        var snipRange = document.createRange();
-        let selectedSource = this.shadowRoot.querySelector('marked-element > .code');
+        const snipRange = document.createRange();
+        const selectedSource = this.shadowRoot.querySelector('marked-element > .code');
         snipRange.selectNodeContents(selectedSource);
-        var selection = window.getSelection();
+        const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(snipRange);
-        var result = false;
+        let result = false;
         try {
           result = document.execCommand('copy');
           this.$.copyButton.textContent = 'done';

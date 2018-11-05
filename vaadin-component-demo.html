@@ -46,7 +46,7 @@
       a {
         text-decoration: none;
         color: #00b4f0;
-        transition: all .2s ease-in-out
+        transition: all .2s ease-in-out;
       }
 
       a:hover,
@@ -89,7 +89,9 @@
   <script>
     class VaadinComponentDemo extends Vaadin.FetchDemoDataMixin(Polymer.Element) {
 
-      static get is() { return 'vaadin-component-demo'; }
+      static get is() {
+        return 'vaadin-component-demo';
+      }
 
       static get properties() {
         return {
@@ -100,7 +102,7 @@
           // Base url for navigation
           baseHref: {
             type: String,
-            value: function () {
+            value: function() {
               return window.location.pathname.replace(/\/([^\/]+\.[^\/]+|)?$/, '');
             }
           },
@@ -136,7 +138,7 @@
 
       // Use hash fragment for navigation if we are using polyserve URL
       _getLinkBase(devMode, baseHref) {
-        return !devMode ? baseHref + '/' : '#'
+        return !devMode ? baseHref + '/' : '#';
       }
 
       _getRoutePattern(devMode, linkBase) {
@@ -181,13 +183,15 @@
               }
             })
             .catch(err => {
-              console.log(`ERROR: Failed to load demo data for '${configSrc}'`, err);
+              console.error(`ERROR: Failed to load demo data for '${configSrc}'`, err);
             });
         }
       }
 
       _pageIndexChanged(selectedPageIndex) {
-        if (selectedPageIndex === undefined || !this._demoConfig) return;
+        if (selectedPageIndex === undefined || !this._demoConfig) {
+          return;
+        }
 
         let page;
         if (selectedPageIndex) {
@@ -197,7 +201,7 @@
         }
 
         if (!page) {
-          console.log(`ERROR: Could not find demo page with index: '${selectedPageIndex}.'`);
+          console.error(`ERROR: Could not find demo page with index: '${selectedPageIndex}.'`);
           return;
         }
 
@@ -206,14 +210,14 @@
             this._showDemo(page.url);
           })
           .catch(err => {
-            console.log(`ERROR: Failed to load demo page for index '${selectedPageIndex}'`, err);
+            console.error(`ERROR: Failed to load demo page for index '${selectedPageIndex}'`, err);
           });
 
         this.$.appLocation.set('path', (this.devMode ? '' : this.linkBase) + page.url);
       }
 
       _showDemo(tagName) {
-        let element = document.createElement(tagName);
+        const element = document.createElement(tagName);
         this.$.demo.innerHTML = '';
         this.$.demo.appendChild(element);
       }

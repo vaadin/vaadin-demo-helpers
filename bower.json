@@ -1,11 +1,31 @@
 {
   "name": "vaadin-demo-helpers",
+  "homepage": "https://vaadin.com/components",
+  "authors": [
+    "Vaadin Ltd"
+  ],
+  "description": "Helper components for showing Vaadin Element demos",
   "main": [
     "vaadin-demo-snippet.html",
     "vaadin-demo-iframe-renderer-outlet.html",
     "vaadin-component-demo.html"
   ],
+  "keywords": [
+    "Vaadin",
+    "vaadin-element",
+    "web-components",
+    "web-component",
+    "polymer"
+  ],
   "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "gulpfile.js",
+    "package-lock.json",
+    "wct.conf.js"
+  ],
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "marked-element": "PolymerElements/marked-element#^2.2.0",

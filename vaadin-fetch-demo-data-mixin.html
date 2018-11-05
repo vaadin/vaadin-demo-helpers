@@ -29,7 +29,7 @@
       script.onreadystatechange = script.onload = e => {
         script.__dynamicImportLoaded = true;
         resolve(e);
-      }
+      };
 
       script.onerror = e => {
         // In case of an error, remove the script from the document so that it
@@ -38,7 +38,7 @@
           script.parentNode.removeChild(script);
         }
         reject(e);
-      }
+      };
 
       document.body.appendChild(script);
     });
@@ -64,7 +64,7 @@
           } else if (xhr.status == 404) {
             reject(e);
           }
-        }
+        };
         xhr.open('GET', url);
         xhr.send();
       });
@@ -72,13 +72,18 @@
 
     fetchResource(url) {
       /* MAGI REMOVE START */
-      return useHtmlImports
-        && new Promise((resolve, reject) => Polymer.importHref(url, resolve, reject, true));
+      const isJsFile = (/\.(js)$/i).test(url);
+      if (isJsFile) {
+        return loadScript(url);
+      } else {
+        return useHtmlImports
+          && new Promise((resolve, reject) => Polymer.importHref(url, resolve, reject, true));
+      }
       /* MAGI REMOVE END */
       /* MAGI ADD START
       return loadScript(url);
       MAGI ADD END */
     }
-  }
+  };
 })();
 </script>

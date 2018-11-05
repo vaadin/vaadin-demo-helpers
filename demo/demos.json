@@ -9,7 +9,7 @@
         "title": "Vaadin Basic Examples",
         "description": "",
         "image": ""
-       }
+      }
     },
     {
         "name": "Advanced",
@@ -19,7 +19,7 @@
           "title": "Vaadin Advanced Examples",
           "description": "",
           "image": ""
-         }
+        }
       }
     ]
   }

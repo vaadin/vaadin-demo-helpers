@@ -16,18 +16,21 @@
         border-bottom: 1px solid #ced0dd;
         padding: 0.8rem 1rem .8rem .8rem;
       }
-      
+
       [hidden] {
         display: none;
       }
 
-      .back, .forward, .url {
+      .back,
+      .forward,
+      .url {
         flex: none;
         height: 30px;
         box-sizing: border-box;
       }
 
-      .back, .forward {
+      .back,
+      .forward {
         line-height: 33px;
         background: #f2f3f7;
         border: none;
@@ -42,11 +45,12 @@
 
       .back:hover,
       .forward:hover {
-        background:#dfe1ea;
+        background: #dfe1ea;
         border-radius: 3px;
       }
 
-      .back[disabled], .forward[disabled] {
+      .back[disabled],
+      .forward[disabled] {
         opacity: .5;
       }
 
@@ -56,10 +60,9 @@
       }
 
       .back svg,
-      .forward svg{
+      .forward svg {
         width: 14px;
         height: auto;
-
       }
 
       .url {
@@ -78,7 +81,7 @@
 
       .url:focus {
         border: 1px solid #9ec5ef;
-        box-shadow: 0 2px 8px 0 rgba(0,0,0,.08);
+        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .08);
       }
 
       #demo {
@@ -112,7 +115,7 @@
   </template>
 
   <script>
-  (()=>{
+  (() => {
     'use strict';
     let instanceIndex = 0;
     class VaadinDemoIframeRenderer extends Polymer.Element {
@@ -168,7 +171,7 @@
         super.ready();
         Vaadin.LightDomHelper.querySelectorAsync('slot', this)
           .then(slot => {
-            return Vaadin.LightDomHelper.querySlotContentAsync('template', slot)
+            return Vaadin.LightDomHelper.querySlotContentAsync('template', slot);
           })
           .then(template => {
             this._showDemo(template);
@@ -182,15 +185,14 @@
         this.__iframeReady.then((iframe) => {
           iframe.contentWindow.postMessage(message, window.location.origin);
         }).catch((error) => {
-          console.log(`demo iframe failed to load: ${error}`)
+          console.error(`demo iframe failed to load: ${error}`);
         });
       }
 
       _onWindowMessage(event) {
         if (event.origin === window.location.origin &&
             event.data.type === 'iframe-popstate' &&
-            event.data.id === this.id)
-        {
+            event.data.id === this.id) {
           this.__resolveIframeReady(this.$.demo);
 
           const detail = event.data.detail;
