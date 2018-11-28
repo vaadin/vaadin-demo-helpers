@@ -1,9 +1,5 @@
 {
-  "name": "@vaadin/vaadin-demo-helpers",
-  "version": "2.1.1",
   "description": "Helper components for showing Vaadin Element demos",
-  "main": "vaadin-component-demo.html",
-  "repository": "vaadin/vaadin-demo-helpers",
   "keywords": [
     "Vaadin",
     "icons",
@@ -11,13 +7,30 @@
     "web-component",
     "polymer"
   ],
+  "repository": "vaadin/vaadin-demo-helpers",
+  "homepage": "https://github.com/vaadin/vaadin-demo-helpers",
+  "name": "@vaadin/vaadin-demo-helpers",
+  "version": "2.1.1",
+  "main": "vaadin-component-demo.js",
   "author": "Vaadin Ltd",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/vaadin/vaadin-demo-helpers/issues"
   },
-  "homepage": "https://github.com/vaadin/vaadin-demo-helpers",
   "files": [
     "vaadin-*.js"
-  ]
+  ],
+  "dependencies": {
+    "@polymer/polymer": "^3.0.0",
+    "@polymer/marked-element": "^3.0.0",
+    "@polymer/prism-element": "^3.0.0",
+    "@polymer/app-route": "^3.0.0",
+    "@vaadin/vaadin-themable-mixin": "^1.2.0",
+    "@vaadin/vaadin-tabs": "^2.0.0"
+  },
+  "devDependencies": {
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "@polymer/iron-demo-helpers": "^3.0.0",
+    "wct-browser-legacy": "^1.0.1"
+  }
 }
