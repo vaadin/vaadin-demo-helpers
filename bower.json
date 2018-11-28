@@ -8,7 +8,9 @@
   "main": [
     "vaadin-demo-snippet.html",
     "vaadin-demo-iframe-renderer-outlet.html",
-    "vaadin-component-demo.html"
+    "vaadin-component-demo.html",
+    "demo/basic-demos.html",
+    "demo/advanced-demos.html"
   ],
   "keywords": [
     "Vaadin",
@@ -27,7 +29,7 @@
     "wct.conf.js"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.0.0",
+    "polymer": "Polymer/polymer#5f5d2c2",
     "marked-element": "PolymerElements/marked-element#^2.2.0",
     "prism-element": "PolymerElements/prism-highlighter#^2.0.1",
     "app-route": "PolymerElements/app-route#^2.0.2",
@@ -38,5 +40,8 @@
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.1.1",
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
     "web-component-tester": "Polymer/web-component-tester#^6.0.0"
+  },
+  "resolutions": {
+    "polymer": "5f5d2c2"
   }
 }
