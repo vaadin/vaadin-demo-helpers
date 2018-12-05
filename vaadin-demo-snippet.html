@@ -251,6 +251,7 @@ MAGI ADD END -->
           iframeSrc: String,
           demoComponentsRoot: String,
           noToolbar: Boolean,
+          whenDefined: String,
           _isIframe: {
             type: Boolean,
             value: false,
@@ -295,9 +296,13 @@ MAGI ADD END -->
       }
 
       _showDemo(template) {
+        const replacement = this.whenDefined ?
+          `customElements.whenDefined('${this.whenDefined}').then(function() ` :
+          `window.addEventListener('WebComponentsReady', function() `;
+
         // Hide the use of window.addDemoReadyListener
         let snippet = this.$.marked.unindent(template.innerHTML)
-          .replace(/window\.addDemoReadyListener\('[^{]+/g, `window.addEventListener('WebComponentsReady', function() `);
+          .replace(/window\.addDemoReadyListener\('[^{]+/g, replacement);
 
         // Hide the use of window.Vaadin.demoComponentsRoot
         snippet = snippet.replace(/`(\${Vaadin\.Demo\.componentsRoot})(.+)`/gi, `'$2'`);
