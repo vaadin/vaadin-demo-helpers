@@ -25,8 +25,7 @@ jobs:
 
 script:
   - npm -q i && npm i -q --no-save bower polymer-cli && bower -q i &&
-    gulp lint &&
-    polymer lint --rules polymer-2 --input ./src/*.html ./theme/**/*.html &&
+    npm run lint &&
     if [[ "$TRAVIS_EVENT_TYPE" != "pull_request" && "$TRAVIS_BRANCH" != quick/* ]]; then
       wct --env saucelabs;
     else
